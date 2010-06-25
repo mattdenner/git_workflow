@@ -48,6 +48,7 @@ require 'nokogiri'
 require 'builder'
 
 def create_story(id)
+  raise StandardError, "Story #{ id } already exists" unless @stories[ id ].nil?
   @stories[ id ] = story = OpenStruct.new(
     :story_id       => id, 
     :story_type     => 'feature', 
