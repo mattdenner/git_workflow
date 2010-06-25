@@ -1,16 +1,25 @@
-Given /^the story (\d+) exists$/ do |story|
-  pending # express the regexp above with the code you wish you had
+Transform /^story (\d+)$/ do |id|
+  id.to_i
 end
 
-Given /^the title of story (\d+) is "([^\"]+)"$/ do |story,title|
-  pending # express the regexp above with the code you wish you had
+Given /^the story (\d+) exists$/ do |id|
+  create_story(id)
 end
 
-Then /^story (\d+) should be (started|finished)$/ do |story,state|
-  pending # express the regexp above with the code you wish you had
+Given /^the name of story (\d+) is "([^\"]+)"$/ do |id,name|
+  for_story(id) do |story|
+    story.name = name
+  end
 end
 
-Then /^the owner of story (\d+) should be "([^\"]+)"$/ do |story,owner|
-  pending # express the regexp above with the code you wish you had
+Then /^story (\d+) should be (started|finished)$/ do |id,state|
+  for_story(id) do |story|
+    story.current_state.should == state
+  end
 end
 
+Then /^the owner of story (\d+) should be "([^\"]+)"$/ do |id,owner|
+  for_story(id) do |story|
+    story.owned_by.should == owner
+  end
+end
