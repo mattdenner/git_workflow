@@ -1,9 +1,18 @@
-Then /^the branch "([^\"]*)" should be active$/ do |name|
+Given /^the local branch "([^\"]+)" exists$/ do |branch|
   in_current_dir do
-    %x{git branch}.split("\n").should include("* #{ name }")
+    %x{git checkout -b #{ branch } master}
   end
 end
 
-Then /^the branch "([^\"]*)" should be merged into master$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+Then /^the branch "([^\"]*)" should be active$/ do |name|
+  in_current_dir do
+    %x{git branch}.split("\n").map(&:strip).should include("* #{ name }")
+  end
+end
+
+Then /^the branch "([^\"]*)" should be merged into master$/ do |name|
+  in_current_dir do
+    %x{git checkout master}
+    %x{git branch --no-merge}.split("\n").map(&:strip).should_not include(name)
+  end
 end
