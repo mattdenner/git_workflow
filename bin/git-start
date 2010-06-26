@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'rest_client'
+require 'nokogiri'
+require 'builder'
+require 'ostruct'
+
+# Retrieve the configuration
+owner_email = %x{git config 'pt.email'}.strip
+project_id  = %x{git config 'pt.projectid'}.strip
+story_id    = ARGV.first or raise StandardError, "Usage: git-start <STORY>"
+
+# Get the details of the story from Pivotal Tracker
+service        = RestClient::Resource.new("http://localhost:7000/services/v3/projects/#{ project_id }/stories/#{ story_id }")
+xml, story     = Nokogiri::XML(service.get), OpenStruct.new
+story.name     = xml.xpath('/story/name/text()').to_s
+story.story_id = xml.xpath('/story/id/text()').to_s
+
+# Checkout the branch
+%x{git checkout -b #{ story.story_id }_#{ story.name.downcase.gsub(/[^a-z0-9]+/, '_') }}
+
+# Update Pivotal Tracker
+xml = Builder::XmlMarkup.new
+xml.story {
+  xml.current_state('started')
+  xml.owned_by(owner_email)
+}
+service.put(xml.to_s)

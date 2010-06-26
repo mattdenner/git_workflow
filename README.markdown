@@ -8,12 +8,12 @@ These are a set of [git](http://git-scm.org/) extensions to integrate with [Pivo
 
 They require certain git configuration settings, either globally or on the project:
 
-* `user.email`    your email address, and assumed to be your PT login
-* `pt.login`      your PT login, only required if `user.email` is not your PT login
-* `pt.token`      your PT API token
-* `pt.projectid`  the PT ID for your project
-* `workflow.local_branch_convention`  used to generate the name of the local branch
-* `workflow.remote_branch_convention` used to generate the name of the remote branch
+* `user.email`                      your email address, and assumed to be your PT login
+* `pt.login`                        your PT login, only required if `user.email` is not your PT login
+* `pt.token`                        your PT API token
+* `pt.projectid`                    the PT ID for your project
+* `workflow.localbranchconvention`  used to generate the name of the local branch
+* `workflow.remotebranchconvention` used to generate the name of the remote branch
 
 The two branch convention settings are freeform text with substitutions, following the standard Ruby string substitution.  Values that can be substituted are:
 
