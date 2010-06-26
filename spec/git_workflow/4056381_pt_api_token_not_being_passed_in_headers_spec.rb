@@ -1,0 +1,31 @@
+require 'spec_helper'
+
+class GitWorkflow
+  public :pivotal_tracker_service
+end
+
+describe GitWorkflow do
+  describe '#pivotal_tracker_service' do
+    before(:each) do
+      GitWorkflow.stub!(:get_config_value_for).with('pt.email').and_return('user email address')
+      GitWorkflow.stub!(:get_config_value_for).with('pt.projectid').and_return('project_id')
+      GitWorkflow.stub!(:get_config_value_for).with('pt.token').and_return('token')
+
+      @workflow    = GitWorkflow.new('story_id')
+      @expectation = RestClient::Resource.should_receive(:new)
+    end
+
+    after(:each) do
+      @expectation.and_return(:ok)
+      @workflow.pivotal_tracker_service.should == :ok
+    end
+
+    it 'uses the correct PT URL' do
+      @expectation = @expectation.with('http://localhost:7000/services/v3/projects/project_id/stories/story_id', anything)
+    end
+
+    it 'uses the users PT API token' do
+      @expectation = @expectation.with(anything, hash_including(:headers => hash_including('X-TrackerToken' => 'token')))
+    end
+  end
+end

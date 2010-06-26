@@ -19,14 +19,27 @@ class GitWorkflow
 private
 
   def load_configuration
-    @owner_email = %x{git config 'pt.email'}.strip
-    @project_id  = %x{git config 'pt.projectid'}.strip
+    @owner_email = get_config_value_for('pt.email')
+    @project_id  = get_config_value_for('pt.projectid')
+    @api_token   = get_config_value_for('pt.token')
+  end
+
+  def self.get_config_value_for(key)
+    %x{git config '#{ key }'}.strip
+  end
+
+  def get_config_value_for(key)
+    self.class.get_config_value_for(key)
   end
 
   def load_story_from_pivotal_tracker
-    Story.new(
-      StorySupportInterface.new(self),
-      RestClient::Resource.new("http://localhost:7000/services/v3/projects/#{ @project_id }/stories/#{ @story_id }")
+    Story.new(StorySupportInterface.new(self), pivotal_tracker_service)
+  end
+
+  def pivotal_tracker_service
+    RestClient::Resource.new(
+      "http://localhost:7000/services/v3/projects/#{ @project_id }/stories/#{ @story_id }",
+      :headers => { 'X-TrackerToken' => @api_token }
     )
   end
 
