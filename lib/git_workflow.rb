@@ -39,7 +39,7 @@ private
   def pivotal_tracker_service
     self.class.enable_http_proxy_if_present
     RestClient::Resource.new(
-      "http://localhost:7000/services/v3/projects/#{ @project_id }/stories/#{ @story_id }",
+      self.class.pivotal_tracker_url_for(@project_id, @story_id),
       :headers => { 'X-TrackerToken' => @api_token }
     )
   end
@@ -52,6 +52,10 @@ private
     proxy   = value_of_environment_variable('http_proxy')
     proxy ||= value_of_environment_variable('HTTP_PROXY')
     RestClient.proxy = proxy unless proxy.nil?
+  end
+
+  def self.pivotal_tracker_url_for(project_id, story_id)
+    "http://www.pivotaltracker.com/services/v3/projects/#{ project_id }/stories/#{ story_id }"
   end
 
   class StorySupportInterface

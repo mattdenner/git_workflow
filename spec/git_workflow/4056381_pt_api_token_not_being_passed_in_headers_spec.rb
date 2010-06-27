@@ -21,7 +21,7 @@ describe GitWorkflow do
     end
 
     it 'uses the correct PT URL' do
-      @expectation = @expectation.with('http://localhost:7000/services/v3/projects/project_id/stories/story_id', anything)
+      @expectation = @expectation.with('http://www.pivotaltracker.com/services/v3/projects/project_id/stories/story_id', anything)
     end
 
     it 'uses the users PT API token' do
