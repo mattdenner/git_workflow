@@ -8,7 +8,7 @@ describe GitWorkflow::Story do
   before(:each) do
     @owner, @service = mock('owner'), mock('service')
     @service.stub!(:get).and_return('<story><name>name</name><id type="integer">1</id></story>')
-    @owner.stub!(:owner_email).and_return('owner email')
+    @owner.stub!(:username).and_return('username')
 
     @story = GitWorkflow::Story.new(@owner, @service)
   end
