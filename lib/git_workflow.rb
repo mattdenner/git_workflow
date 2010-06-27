@@ -28,8 +28,12 @@ class GitWorkflow
     GitWorkflow.new(id).execute(&block)
   end
 
+  def self.story_or_current_branch(id, &block)
+    self.story(id || determine_current_branch, &block)
+  end
+
   def initialize(id)
-    @story_id = id
+    @story_id = id or raise StandardError, "You have not specified a story ID"
     load_configuration
   end
 
@@ -38,6 +42,12 @@ class GitWorkflow
   end
 
 private
+
+  def self.determine_current_branch
+    matches = execute_command('git branch').split("\n").grep(/^\* ([^\s]+)$/) { |branch| branch[2..-1] }
+    raise StandardError, 'You do not appear to be on a working branch' if matches.empty?
+    matches.first.match(/^(\d+)_.+$/)[ 1 ]
+  end
 
   def load_configuration
     @username   = get_config_value_for('pt.username') || get_config_value_for!('user.name')
@@ -56,6 +66,7 @@ private
 
   delegates_to_class(:get_config_value_for)
   delegates_to_class(:get_config_value_for!)
+  delegates_to_class(:execute_command)
 
   def load_story_from_pivotal_tracker
     Story.new(StorySupportInterface.new(self), pivotal_tracker_service)

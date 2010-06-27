@@ -4,6 +4,12 @@ Given /^the local branch "([^\"]+)" exists$/ do |branch|
   end
 end
 
+Given /^the local branch "([^\"]+)" is active$/ do |branch|
+  in_current_dir do
+    %x{git checkout #{ branch }}
+  end
+end
+
 Then /^the branch "([^\"]*)" should be active$/ do |name|
   in_current_dir do
     %x{git branch}.split("\n").map(&:strip).should include("* #{ name }")
