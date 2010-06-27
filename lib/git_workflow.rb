@@ -8,6 +8,19 @@ module Execution
   end
 end
 
+class Class
+  def delegates_to_class(method)
+    class_eval do
+      linenumber = __LINE__ + 1
+      eval(%Q{
+        def #{ method }(*args, &block)
+          self.class.#{ method }(*args, &block)
+        end
+      }, binding, __FILE__, linenumber)
+    end
+  end
+end
+
 class GitWorkflow
   extend Execution
 
@@ -27,9 +40,9 @@ class GitWorkflow
 private
 
   def load_configuration
-    @username   = get_config_value_for('pt.username') || get_config_value_for('user.name')
-    @project_id = get_config_value_for('pt.projectid')
-    @api_token  = get_config_value_for('pt.token')
+    @username   = get_config_value_for('pt.username') || get_config_value_for!('user.name')
+    @project_id = get_config_value_for!('pt.projectid')
+    @api_token  = get_config_value_for!('pt.token')
   end
 
   def self.get_config_value_for(key)
@@ -37,9 +50,12 @@ private
     value.empty? ? nil : value
   end
 
-  def get_config_value_for(key)
-    self.class.get_config_value_for(key)
+  def self.get_config_value_for!(key)
+    get_config_value_for(key) or raise StandardError, "Required configuration setting '#{ key }' is unset"
   end
+
+  delegates_to_class(:get_config_value_for)
+  delegates_to_class(:get_config_value_for!)
 
   def load_story_from_pivotal_tracker
     Story.new(StorySupportInterface.new(self), pivotal_tracker_service)
