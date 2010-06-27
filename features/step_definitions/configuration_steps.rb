@@ -1,5 +1,5 @@
-Given /^my Pivotal Tracker email address is "([^\"]+)"$/ do |email|
-  git_configure('pt.email', email)
+Given /^my Pivotal Tracker username is "([^\"]+)"$/ do |username|
+  git_configure('pt.username', username)
 end
 
 Given /^my Pivotal Tracker project ID is (\d+)$/ do |id|

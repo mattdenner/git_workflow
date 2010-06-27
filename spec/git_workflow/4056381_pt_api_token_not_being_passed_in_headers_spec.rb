@@ -7,7 +7,7 @@ end
 describe GitWorkflow do
   describe '#pivotal_tracker_service' do
     before(:each) do
-      GitWorkflow.stub!(:get_config_value_for).with('pt.email').and_return('user email address')
+      GitWorkflow.stub!(:get_config_value_for).with('pt.username').and_return('user name')
       GitWorkflow.stub!(:get_config_value_for).with('pt.projectid').and_return('project_id')
       GitWorkflow.stub!(:get_config_value_for).with('pt.token').and_return('token')
 

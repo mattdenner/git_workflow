@@ -19,7 +19,7 @@ class GitWorkflow
 private
 
   def load_configuration
-    @owner_email = get_config_value_for('pt.email')
+    @owner_email = get_config_value_for('pt.username')
     @project_id  = get_config_value_for('pt.projectid')
     @api_token   = get_config_value_for('pt.token')
   end
