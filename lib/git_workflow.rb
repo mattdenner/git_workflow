@@ -37,10 +37,21 @@ private
   end
 
   def pivotal_tracker_service
+    self.class.enable_http_proxy_if_present
     RestClient::Resource.new(
       "http://localhost:7000/services/v3/projects/#{ @project_id }/stories/#{ @story_id }",
       :headers => { 'X-TrackerToken' => @api_token }
     )
+  end
+
+  def self.value_of_environment_variable(key)
+    ENV[key]
+  end
+
+  def self.enable_http_proxy_if_present
+    proxy   = value_of_environment_variable('http_proxy')
+    proxy ||= value_of_environment_variable('HTTP_PROXY')
+    RestClient.proxy = proxy unless proxy.nil?
   end
 
   class StorySupportInterface
