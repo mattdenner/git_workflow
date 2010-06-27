@@ -34,9 +34,15 @@ end
 
 # This ensures that we have a behaviour similar to that of Pivotal Tracker.
 Before('@needs_service') do
-  @stories = {}
-  @service = PivotalTrackerService.new(:host => 'localhost', :port => 7000)
+  @_http_proxy_before = ENV['http_proxy']
+  ENV['http_proxy']   = 'http://localhost:7000/'
+
+  @stories, @service = {}, PivotalTrackerService.new(:host => 'localhost', :port => 7000)
   @service.run!
+end
+
+After('@needs_service') do
+  ENV['http_proxy'] = @_http_proxy_before
 end
 
 def mock_service
