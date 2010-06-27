@@ -4,8 +4,7 @@ require 'rubygems'
 $:.push(File.expand_path(File.join(File.dirname(__FILE__), %w{.. lib})))
 require 'git_workflow'
 
-story_id = ARGV.first or raise StandardError, "Usage: git-finish <STORY>"
-GitWorkflow.story(story_id) do |story|
+GitWorkflow.story_or_current_branch(ARGV.first) do |story|
   story.merge_into!('master')
   story.finished!
 end

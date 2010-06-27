@@ -32,21 +32,22 @@ private
   end
 end
 
+mock_service = PivotalTrackerService.new(:host => 'localhost', :port => 7000)
+mock_service.run!
+self.class.instance_eval do
+  define_method(:mock_service) { mock_service }
+end
+
 # This ensures that we have a behaviour similar to that of Pivotal Tracker.
 Before('@needs_service') do
   @_http_proxy_before = ENV['http_proxy']
   ENV['http_proxy']   = 'http://localhost:7000/'
 
-  @stories, @service = {}, PivotalTrackerService.new(:host => 'localhost', :port => 7000)
-  @service.run!
+  @stories = {}
 end
 
 After('@needs_service') do
   ENV['http_proxy'] = @_http_proxy_before
-end
-
-def mock_service
-  @service
 end
 
 require 'ostruct'
@@ -62,7 +63,7 @@ def create_story(id)
     :owned_by       => '',
     :name           => ''
   )
-  @service.get "/services/v3/projects/#{ @service.project_id }/stories/#{ id }" do
+  mock_service.get "/services/v3/projects/#{ mock_service.project_id }/stories/#{ id }" do
     xml = Builder::XmlMarkup.new(:indent => 2)
     xml.instruct!
     xml.story {
@@ -73,7 +74,7 @@ def create_story(id)
     }
     xml.to_s
   end
-  @service.put "/services/v3/projects/#{ @service.project_id }/stories/#{ id }" do
+  mock_service.put "/services/v3/projects/#{ mock_service.project_id }/stories/#{ id }" do
     Nokogiri::XML(request.body.read).xpath('/story/*').each do |element|
       story.send(:"#{ element.name }=", element.content)
     end
