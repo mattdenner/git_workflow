@@ -114,9 +114,9 @@ private
       xml = Builder::XmlMarkup.new
       xml.story {
         xml.owned_by(@owner.owner_email)
-        yield(xml)
+        yield(xml) if block_given?
       }
-      @service.put(xml.to_s)
+      @service.put(xml.to_s, :content_type => 'text/xml')
     end
   end
 end
