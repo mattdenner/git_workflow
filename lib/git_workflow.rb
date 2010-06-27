@@ -78,7 +78,7 @@ private
     end
 
     def branch_name
-      "#{ @story_id }_#{ @name.downcase.gsub(/[^a-z0-9]+/, '_') }"
+      "#{ @story_id }_#{ @name }".downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
     end
     
     def create_branch!
