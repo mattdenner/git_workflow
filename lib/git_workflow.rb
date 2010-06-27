@@ -19,7 +19,7 @@ class GitWorkflow
 private
 
   def load_configuration
-    @owner_email = get_config_value_for('pt.username')
+    @username = get_config_value_for('pt.username') || get_config_value_for('user.name')
     @project_id  = get_config_value_for('pt.projectid')
     @api_token   = get_config_value_for('pt.token')
   end
@@ -67,7 +67,7 @@ private
       @workflow = workflow
     end
 
-    attr_reader_in_workflow(:owner_email)
+    attr_reader_in_workflow(:username)
     attr_reader_in_workflow(:project_id)
   end
   
@@ -113,7 +113,7 @@ private
     def service!(&block)
       xml = Builder::XmlMarkup.new
       xml.story {
-        xml.owned_by(@owner.owner_email)
+        xml.owned_by(@owner.username)
         yield(xml) if block_given?
       }
       @service.put(xml.target!, :content_type => 'application/xml')
