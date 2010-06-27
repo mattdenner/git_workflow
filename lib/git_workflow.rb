@@ -50,9 +50,10 @@ private
   end
 
   def load_configuration
-    @username   = get_config_value_for('pt.username') || get_config_value_for!('user.name')
-    @project_id = get_config_value_for!('pt.projectid')
-    @api_token  = get_config_value_for!('pt.token')
+    @username                = get_config_value_for('pt.username') || get_config_value_for!('user.name')
+    @project_id              = get_config_value_for!('pt.projectid')
+    @api_token               = get_config_value_for!('pt.token')
+    @local_branch_convention = get_config_value_for!('workflow.localbranchconvention')
   end
 
   def self.get_config_value_for(key)
@@ -105,10 +106,21 @@ private
 
     attr_reader_in_workflow(:username)
     attr_reader_in_workflow(:project_id)
+
+    EVALUATION_REGEXP = /\$\{([^\}]+)\}/
+
+    def branch_name_for(story)
+      convention = @workflow.instance_variable_get('@local_branch_convention')
+      convention = %Q{"#{ convention.gsub!(EVALUATION_REGEXP, '#{\1}') }"} if convention =~ EVALUATION_REGEXP
+      eval(convention, binding)
+    end
   end
   
   class Story
     include Execution
+
+    attr_reader :story_id
+    attr_reader :name
 
     def initialize(owner, service)
       @owner, @service = owner, service
@@ -116,7 +128,7 @@ private
     end
 
     def branch_name
-      "#{ @story_id }_#{ @name }".downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
+      @owner.branch_name_for(self).downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
     end
     
     def create_branch!

@@ -19,11 +19,11 @@ describe GitWorkflow::Story do
     end
 
     it 'does not end in underscore with invalid character at the end' do
-      @story.name = 'ends in invalid character!'
+      @owner.should_receive(:branch_name_for).with(@story).and_return('ends in invalid character!')
     end
 
     it 'does not end in multiple underscores' do
-      @story.name = 'end in invalid characters!!!!!!'
+      @owner.should_receive(:branch_name_for).with(@story).and_return('end in invalid characters!!!!!!')
     end
   end
 end

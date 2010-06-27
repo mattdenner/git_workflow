@@ -19,6 +19,7 @@ describe GitWorkflow do
       GitWorkflow.should_receive(:get_config_value_for!).with('user.name').and_return('username')
       GitWorkflow.should_receive(:get_config_value_for!).with('pt.projectid').and_return('project_id')
       GitWorkflow.should_receive(:get_config_value_for!).with('pt.token').and_return('token')
+      GitWorkflow.should_receive(:get_config_value_for!).with('workflow.localbranchconvention').and_return('convention')
 
       GitWorkflow.new('story_id')
     end

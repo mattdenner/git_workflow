@@ -15,9 +15,9 @@ They require certain git configuration settings, either globally or on the proje
 * `workflow.localbranchconvention`  used to generate the name of the local branch
 * `workflow.remotebranchconvention` used to generate the name of the remote branch
 
-The two branch convention settings are freeform text with substitutions, following the standard Ruby string substitution.  Values that can be substituted are:
+The two branch convention settings are freeform text with substitutions.  Values that can be substituted are:
 
-* `project`     contains the details of the PT project
-* `story`       contains the details of the PT story
+* `story.story_id` is the PT story ID for the story
+* `story.name`     is the name of the PT story
 
-For instance, "`#{story.id}_#{story.name}`" will generate a branch of the form `12345_some_new_feature`, if this is for story 12345 and that story has the name 'Some new feature'.  The final branch will have non-alphanumeric characters replaced by underscore.
+For instance, "`${story.id}_${story.name}`" will generate a branch of the form `12345_some_new_feature`, if this is for story 12345 and that story has the name 'Some new feature'.  The final branch will have non-alphanumeric characters replaced by underscore.

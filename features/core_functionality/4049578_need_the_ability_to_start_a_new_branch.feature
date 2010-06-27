@@ -6,7 +6,7 @@ Feature: Need the ability to start a new branch
     Given my Pivotal Tracker username is "Matthew Denner"
     And my Pivotal Tracker project ID is 93630
     And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "#{story.id}_#{story.title}"
+    And my local branch naming convention is "${story.story_id}_${story.name}"
 
     Given the story 4049578 exists
     And the name of story 4049578 is "Need the ability to start a new branch"
