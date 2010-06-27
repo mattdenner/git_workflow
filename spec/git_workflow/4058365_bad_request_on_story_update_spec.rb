@@ -1,10 +1,6 @@
 require 'spec_helper'
 
-class GitWorkflow::Story
-  public :service!
-end
-
-describe GitWorkflow::Story do
+describe GitWorkflow do
   before(:each) do
     @owner, @service = mock('owner'), mock('service')
     @service.stub!(:get).and_return('<story><name>name</name><id type="integer">1</id></story>')
@@ -14,8 +10,8 @@ describe GitWorkflow::Story do
   end
 
   describe '#service!' do
-    it 'sets the "Content-Type" header to "text/xml"' do
-      @service.should_receive(:put).with(anything, hash_including(:content_type => 'application/xml'))
+    it 'generates valid XML' do
+      @service.should_receive(:put).with('<story><owned_by>owner email</owned_by></story>', anything)
       @story.service!
     end
   end
