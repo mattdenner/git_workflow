@@ -2,7 +2,15 @@ require 'rest_client'
 require 'nokogiri'
 require 'builder'
 
+module Execution
+  def execute_command(command)
+    %x{#{ command }}
+  end
+end
+
 class GitWorkflow
+  extend Execution
+
   def self.story(id, &block)
     GitWorkflow.new(id).execute(&block)
   end
@@ -19,13 +27,14 @@ class GitWorkflow
 private
 
   def load_configuration
-    @username = get_config_value_for('pt.username') || get_config_value_for('user.name')
-    @project_id  = get_config_value_for('pt.projectid')
-    @api_token   = get_config_value_for('pt.token')
+    @username   = get_config_value_for('pt.username') || get_config_value_for('user.name')
+    @project_id = get_config_value_for('pt.projectid')
+    @api_token  = get_config_value_for('pt.token')
   end
 
   def self.get_config_value_for(key)
-    %x{git config '#{ key }'}.strip
+    value = execute_command("git config #{ key }").strip
+    value.empty? ? nil : value
   end
 
   def get_config_value_for(key)
@@ -72,6 +81,8 @@ private
   end
   
   class Story
+    include Execution
+
     def initialize(owner, service)
       @owner, @service = owner, service
       load_story!
@@ -82,12 +93,12 @@ private
     end
     
     def create_branch!
-      %x{git checkout -b #{ self.branch_name }}
+      execute_command("git checkout -b #{ self.branch_name }")
     end
 
     def merge_into!(branch)
-      %x{git checkout #{ branch }}
-      %x{git merge --no-ff #{ self.branch_name }}
+      execute_command("git checkout #{ branch }")
+      execute_command("git merge --no-ff #{ self.branch_name }")
     end
 
     def started!
