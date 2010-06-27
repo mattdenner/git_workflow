@@ -9,6 +9,7 @@ describe GitWorkflow do
     before(:each) do
       GitWorkflow.stub!(:get_config_value_for).with('pt.projectid').and_return('project_id')
       GitWorkflow.stub!(:get_config_value_for).with('pt.token').and_return('token')
+      GitWorkflow.stub!(:get_config_value_for).with('workflow.localbranchconvention').and_return('convention')
     end
 
     context 'when pt.username is set' do

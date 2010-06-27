@@ -10,6 +10,7 @@ describe GitWorkflow do
       GitWorkflow.stub!(:get_config_value_for).with('pt.username').and_return('user name')
       GitWorkflow.stub!(:get_config_value_for).with('pt.projectid').and_return('project_id')
       GitWorkflow.stub!(:get_config_value_for).with('pt.token').and_return('token')
+      GitWorkflow.stub!(:get_config_value_for).with('workflow.localbranchconvention').and_return('convention')
 
       @workflow    = GitWorkflow.new('story_id')
       @expectation = RestClient::Resource.should_receive(:new)

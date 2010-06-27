@@ -11,8 +11,8 @@ Given /^my Pivotal Tracker token is ([a-zA-Z0-9]+)$/ do |token|
   git_configure('pt.token', token)
 end
 
-Given /^my (local|remote) branch naming convention is "((?:(?:(?:#\{[a-z][a-z_]+\.[a-z][a-z_]+\})|[a-zA-Z0-9_]+)+))"$/ do |branch,convention|
-  git_configure("workflow.#{ branch }namingconvention", convention)
+Given /^my (local|remote) branch naming convention is "((?:(?:(?:\$\{[a-z][a-z_]+\.[a-z][a-z_]+\})|[a-zA-Z0-9_]+)+))"$/ do |branch,convention|
+  git_configure("workflow.#{ branch }branchconvention", convention)
 end
 
 def git_configure(key, value)
