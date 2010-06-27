@@ -116,7 +116,7 @@ private
         xml.owned_by(@owner.owner_email)
         yield(xml) if block_given?
       }
-      @service.put(xml.to_s, :content_type => 'text/xml')
+      @service.put(xml.target!, :content_type => 'application/xml')
     end
   end
 end
