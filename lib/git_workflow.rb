@@ -137,7 +137,7 @@ private
 
     def merge_into!(branch)
       execute_command("git checkout #{ branch }")
-      execute_command("git merge --no-ff #{ self.branch_name }")
+      execute_command("git merge #{ self.branch_name }")
     end
 
     def started!
