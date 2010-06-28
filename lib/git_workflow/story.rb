@@ -58,11 +58,18 @@ class GitWorkflow
     end
 
     def branch_name
-      GitWorkflow::Configuration.instance.local_branch_convention.to(self)
+      @branch_name ||= GitWorkflow::Configuration.instance.local_branch_convention.to(self)
     end
     
     def create_branch!
-      execute_command("git checkout -b #{ self.branch_name }")
+      command = 'git checkout '
+      command << '-b ' unless branch_already_exists?
+      command << self.branch_name
+      execute_command(command)
+    end
+
+    def branch_already_exists?
+      GitWorkflow::Configuration.instance.branches.find { |name,_| name == self.branch_name }
     end
 
     def merge_into!(branch)

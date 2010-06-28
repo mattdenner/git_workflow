@@ -25,23 +25,22 @@ describe GitWorkflow::Configuration do
 end
 
 describe GitWorkflow do
-  describe '.determine_current_branch' do
-    it 'returns the current branch' do
-      GitWorkflow.should_receive(:execute_command).with('git branch').and_return("  some_branch\n* some_other_branch")
-      GitWorkflow.determine_current_branch.should == 'some_other_branch'
-    end
+  before(:each) do
+    @configuration = mock('configuration')
+    GitWorkflow::Configuration.stub!(:instance).and_return(@configuration)
+  end
 
-    it 'errors if there is no working branch' do
-      GitWorkflow.should_receive(:execute_command).with('git branch').and_return("  some_branch\n  some_other_branch")
-      lambda { GitWorkflow.determine_current_branch }.should raise_error(StandardError)
+  describe '.determine_current_branch' do
+    it 'delegates to the configuration' do
+      @configuration.should_receive(:active_branch).and_return(:ok)
+      GitWorkflow.determine_current_branch.should == :ok 
     end
   end
 
   describe '.extract_story_from_branch' do
     before(:each) do
-      configuration, @convention = mock('configuration'), mock('convention')
-      configuration.stub!(:local_branch_convention).and_return(@convention)
-      GitWorkflow::Configuration.stub!(:instance).and_return(configuration)
+      @convention = mock('convention')
+      @configuration.stub!(:local_branch_convention).and_return(@convention)
     end
 
     it 'uses the branch convention' do
@@ -70,6 +69,7 @@ describe GitWorkflow::Configuration::Convention do
     describe '#to' do
       before(:each) do
         @decoder = described_class.new(@convention)
+        @decoder.stub!(:use_existing_for).with(anything).and_return(nil)
       end
 
       it 'evaluates the convention string' do
