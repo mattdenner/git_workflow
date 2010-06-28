@@ -1,6 +1,7 @@
 require 'rest_client'
 require 'nokogiri'
 require 'builder'
+require 'singleton'
 
 module Execution
   def execute_command(command)
@@ -29,7 +30,7 @@ class GitWorkflow
   end
 
   def self.story_or_current_branch(id, &block)
-    self.story(id || determine_current_branch, &block)
+    self.story(id || extract_story_from_branch(determine_current_branch), &block)
   end
 
   def initialize(id)
@@ -43,31 +44,79 @@ class GitWorkflow
 
 private
 
+  class Configuration
+    include Singleton
+    extend Execution
+
+    class Convention
+      REGEXP_STORY_ID   = /\$\{\s*story\.story_id\s*\}/
+      REGEXP_EVALUATION = /\$\{([^\}]+)\}/
+
+      def initialize(convention)
+        raise StandardError, "Convention '#{ convention }' has no story ID" unless convention =~ REGEXP_STORY_ID
+        @to_convention   = convention.gsub(REGEXP_EVALUATION, '#{\1}')
+        @from_convention = Regexp.new(convention.sub(REGEXP_STORY_ID, '(\d+)').gsub(REGEXP_EVALUATION, '.+'))
+      end
+
+      def to(story)
+        eval(%Q{"#{ @to_convention }"}, binding).downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
+      end
+
+      def from(branch)
+        match = branch.match(@from_convention)
+        raise StandardError, "Branch '#{ branch }' does not appear to conform to local convention" if match.nil?
+        match[ 1 ].to_i
+      end
+    end
+
+    def username
+      @username ||= get_config_value_for('pt.username') || get_config_value_for!('user.name')
+    end
+
+    def local_branch_convention
+      @local_branch_convention ||= Convention.new(get_config_value_for!('workflow.localbranchconvention'))
+    end
+
+    def project_id
+      @project_id ||= get_config_value_for!('pt.projectid')
+    end
+
+    def api_token
+      @api_token ||= get_config_value_for!('pt.token')
+    end
+
+  private
+
+    class << self
+      def get_config_value_for(key)
+        value = execute_command("git config #{ key }").strip
+        value.empty? ? nil : value
+      end
+
+      def get_config_value_for!(key)
+        get_config_value_for(key) or raise StandardError, "Required configuration setting '#{ key }' is unset"
+      end
+    end
+    delegates_to_class(:get_config_value_for)
+    delegates_to_class(:get_config_value_for!)
+  end
+
   def self.determine_current_branch
     matches = execute_command('git branch').split("\n").grep(/^\* ([^\s]+)$/) { |branch| branch[2..-1] }
     raise StandardError, 'You do not appear to be on a working branch' if matches.empty?
-    matches.first.match(/^(\d+)_.+$/)[ 1 ]
+    matches.first
+  end
+
+  def self.extract_story_from_branch(branch)
+    Configuration.instance.local_branch_convention.from(branch)
   end
 
   def load_configuration
-    @username                = get_config_value_for('pt.username') || get_config_value_for!('user.name')
-    @project_id              = get_config_value_for!('pt.projectid')
-    @api_token               = get_config_value_for!('pt.token')
-    @local_branch_convention = get_config_value_for!('workflow.localbranchconvention')
+    @username                = Configuration.instance.username
+    @project_id              = Configuration.instance.project_id
+    @api_token               = Configuration.instance.api_token
+    @local_branch_convention = Configuration.instance.local_branch_convention
   end
-
-  def self.get_config_value_for(key)
-    value = execute_command("git config #{ key }").strip
-    value.empty? ? nil : value
-  end
-
-  def self.get_config_value_for!(key)
-    get_config_value_for(key) or raise StandardError, "Required configuration setting '#{ key }' is unset"
-  end
-
-  delegates_to_class(:get_config_value_for)
-  delegates_to_class(:get_config_value_for!)
-  delegates_to_class(:execute_command)
 
   def load_story_from_pivotal_tracker
     Story.new(StorySupportInterface.new(self), pivotal_tracker_service)
@@ -107,12 +156,8 @@ private
     attr_reader_in_workflow(:username)
     attr_reader_in_workflow(:project_id)
 
-    EVALUATION_REGEXP = /\$\{([^\}]+)\}/
-
     def branch_name_for(story)
-      convention = @workflow.instance_variable_get('@local_branch_convention')
-      convention = %Q{"#{ convention.gsub!(EVALUATION_REGEXP, '#{\1}') }"} if convention =~ EVALUATION_REGEXP
-      eval(convention, binding)
+      GitWorkflow::Configuration.instance.local_branch_convention.to(story)
     end
   end
   
@@ -128,7 +173,7 @@ private
     end
 
     def branch_name
-      @owner.branch_name_for(self).downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
+      GitWorkflow::Configuration.instance.local_branch_convention.to(self)
     end
     
     def create_branch!
