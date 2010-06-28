@@ -30,9 +30,7 @@ class GitWorkflow
 private
 
   def self.determine_current_branch
-    matches = execute_command('git branch').split("\n").grep(/^\* ([^\s]+)$/) { |branch| branch[2..-1] }
-    raise StandardError, 'You do not appear to be on a working branch' if matches.empty?
-    matches.first
+    GitWorkflow::Configuration.instance.active_branch
   end
 
   def self.extract_story_from_branch(branch)
