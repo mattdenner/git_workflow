@@ -38,9 +38,9 @@ describe GitWorkflow do
   end
 
   describe '#pivotal_tracker_service' do
-    before(:each) do
-      GitWorkflow.stub!(:get_config_value_for).with(anything).and_return('some value')
+    it_should_behave_like 'it needs configuration'
 
+    before(:each) do
       @workflow = GitWorkflow.new('story_id')
     end
 
