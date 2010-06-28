@@ -4,7 +4,7 @@ require 'builder'
 
 class GitWorkflow
   def load_story_from_pivotal_tracker
-    Story.new(StorySupportInterface.new(self), pivotal_tracker_service)
+    Story.new(pivotal_tracker_service)
   end
 
   def pivotal_tracker_service
@@ -28,23 +28,6 @@ class GitWorkflow
   def self.pivotal_tracker_url_for(project_id, story_id)
     "http://www.pivotaltracker.com/services/v3/projects/#{ project_id }/stories/#{ story_id }"
   end
-
-  class StorySupportInterface
-    def self.attr_reader_in_workflow(name)
-      define_method(:"#{ name }") { @workflow.instance_variable_get("@#{ name }") }
-    end
-
-    def initialize(workflow)
-      @workflow = workflow
-    end
-
-    attr_reader_in_workflow(:username)
-    attr_reader_in_workflow(:project_id)
-
-    def branch_name_for(story)
-      GitWorkflow::Configuration.instance.local_branch_convention.to(story)
-    end
-  end
   
   class Story
     include Execution
@@ -52,8 +35,8 @@ class GitWorkflow
     attr_reader :story_id
     attr_reader :name
 
-    def initialize(owner, service)
-      @owner, @service = owner, service
+    def initialize(service)
+      @service = service
       load_story!
     end
 
@@ -93,7 +76,7 @@ class GitWorkflow
     def service!(&block)
       xml = Builder::XmlMarkup.new
       xml.story {
-        xml.owned_by(@owner.username)
+        xml.owned_by(GitWorkflow::Configuration.instance.username)
         yield(xml) if block_given?
       }
       @service.put(xml.target!, :content_type => 'application/xml')

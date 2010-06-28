@@ -5,15 +5,9 @@ class GitWorkflow::Story
 end
 
 describe GitWorkflow::Story do
-  before(:each) do
-    @owner, @service = mock('owner'), mock('service')
-    @service.stub!(:get).and_return('<story><name>name</name><id type="integer">1</id></story>')
-    @owner.stub!(:username).and_return('username')
-
-    @story = GitWorkflow::Story.new(@owner, @service)
-  end
-
   describe '#branch_name' do
+    it_should_behave_like 'it needs a working Story'
+
     it 'delegates to the local branch convention' do
       configuration, convention = mock('configuration'), mock('convention')
       configuration.should_receive(:local_branch_convention).and_return(convention)

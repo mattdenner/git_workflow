@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe GitWorkflow do
-  before(:each) do
-    @owner, @service = mock('owner'), mock('service')
-    @service.stub!(:get).and_return('<story><name>name</name><id type="integer">1</id></story>')
-    @owner.stub!(:username).and_return('username')
-
-    @story = GitWorkflow::Story.new(@owner, @service)
-  end
+  it_should_behave_like 'it needs configuration'
+  it_should_behave_like 'it needs a working Story'
 
   describe '#service!' do
     it 'generates valid XML' do
