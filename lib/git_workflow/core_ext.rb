@@ -13,6 +13,8 @@ end
 
 module Execution
   def execute_command(command)
-    %x{#{ command }}
+    rc = IO.popen(command) { |pipe| pipe.read }
+    raise StandardError, "Command '#{ command }' failed" unless $?.exitstatus == 0
+    rc
   end
 end

@@ -1,6 +1,7 @@
 Given /^the local branch "([^\"]+)" exists$/ do |branch|
   in_current_dir do
     %x{git checkout -b #{ branch } master}
+    %x{git checkout master}
   end
 end
 
