@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.specification_version     = 3
 
   s.name    = %q{git_workflow}
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   
   # Get the dependencies from Bundler ...
   s.add_dependency('rest-client', [ '>= 1.5.1' ])
@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
   s.executables   = [ 'git-start', 'git-finish' ]
   s.require_paths = [ 'lib' ]
   s.test_files    = [ 'spec/**/*.rb', 'features/**/*.feature', 'features/**/*.rb' ].map { |p| Dir[ p ] }.flatten
-  s.files         = [ "README.markdown", "Rakefile", "Gemfile", 'Gemfile.lock' ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
+  s.files         = [ "README.markdown", "Rakefile" ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
 end
