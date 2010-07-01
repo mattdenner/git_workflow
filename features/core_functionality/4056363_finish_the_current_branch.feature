@@ -15,7 +15,7 @@ Feature: Finish the current branch
     And the local branch "4056363_finish_the_current_branch" is active
     And the default rake task will succeed
 
-    When I successfully run "git finish"
+    When I successfully execute "git finish"
 
     Then the branch "4056363_finish_the_current_branch" should be merged into master
     And the owner of story 4056363 should be "Matthew Denner"

@@ -1,7 +1,3 @@
-# Ensure that the environment is setup correctly.
-require 'bundler'
-Bundler.setup
-
 require 'rest_client'
 require 'nokogiri'
 require 'builder'
