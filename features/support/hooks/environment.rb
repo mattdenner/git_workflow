@@ -2,7 +2,7 @@
 Before do
   # First we modify the PATH so that the bin directory is available
   @path_before = ENV['PATH']
-  ENV['PATH'] = "#{ ENV['PATH'] }:#{ File.expand_path(File.join(File.dirname(__FILE__), %w{.. .. .. bin})) }"
+  ENV['PATH'] = "#{ File.expand_path(File.join(File.dirname(__FILE__), %w{.. .. .. bin})) }:#{ ENV['PATH'] }"
 
   # Then we initialise a git repository using Aruba!
   Given %Q{I successfully run "git init ."}
