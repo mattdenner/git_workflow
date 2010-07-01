@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-
-$:.push(File.expand_path(File.join(File.dirname(__FILE__), %w{.. lib})))
 require 'git_workflow'
 
 GitWorkflow.story_or_current_branch(ARGV.first) do |story|

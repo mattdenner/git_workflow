@@ -23,3 +23,10 @@ Then /^the branch "([^\"]*)" should be merged into master$/ do |name|
     %x{git branch --no-merge}.split("\n").map(&:strip).should_not include(name)
   end
 end
+
+When /^I successfully execute "git (start|finish)([^\"]*)"$/ do |command,arguments|
+  root_path    = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+  real_command = File.join(root_path, 'bin', "git-#{ command }")
+  lib_path     = File.join(root_path, 'lib')
+  When %Q{I successfully run "ruby -I#{ lib_path } #{ real_command }#{ arguments }"}
+end

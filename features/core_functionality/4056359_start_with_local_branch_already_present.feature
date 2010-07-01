@@ -12,7 +12,7 @@ Feature: Start with local branch already present
 
     Given the local branch "4056359_start_with_local_branch_already_present" exists
     
-    When I successfully run "git start 4056359"
+    When I successfully execute "git start 4056359"
 
     Then the branch "4056359_start_with_local_branch_already_present" should be active
     And the owner of story 4056359 should be "Matthew Denner"
