@@ -1,2 +1,4 @@
 doc/**
 tmp/**
+.bundle/**
+git_workflow-*.gem

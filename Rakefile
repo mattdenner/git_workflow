@@ -1,4 +1,7 @@
 require 'rubygems'
+require 'bundler'
+Bundler.setup(:build, :test)
+
 require 'rake'
 
 require 'yard'
