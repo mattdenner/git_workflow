@@ -1,8 +1,11 @@
 require 'sinatra'
 require 'sinatra_webservice'
 require 'ostruct'
-require 'nokogiri'
 require 'builder'
+
+# Nokogiri doesn't like buggy LibXML2
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
+require 'nokogiri'
 
 class SinatraWebService::SinatraStem
   get '/services/v3/projects/:project_id/stories/:story_id' do |_, story_id|
