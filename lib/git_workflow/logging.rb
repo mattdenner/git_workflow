@@ -6,7 +6,7 @@ class GitWorkflow
       base.instance_eval do
         extend ClassMethods
 
-        [ :debug, :info ].each do |level|
+        [ :debug, :info, :error ].each do |level|
           class_eval <<-END_OF_LOGGING_METHOD
             def #{ level }(message, &block)
               self.class.#{ level }(message, &block)
