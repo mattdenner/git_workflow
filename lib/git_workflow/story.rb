@@ -112,6 +112,10 @@ class GitWorkflow
         yield(xml) if block_given?
       }
       @service.put(xml.target!, :content_type => 'application/xml')
+    rescue RestClient::ExceptionWithResponse => exception
+      error('Cannot seem to perform operation with PT:')
+      error(exception.response)
+      raise
     end
   end
 end
