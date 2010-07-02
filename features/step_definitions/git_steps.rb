@@ -1,13 +1,17 @@
+def execute_silently(command)
+  %x{#{ command } > /dev/null 2>&1}
+end
+
 Given /^the local branch "([^\"]+)" exists$/ do |branch|
   in_current_dir do
-    %x{git checkout -b #{ branch } master}
-    %x{git checkout master}
+    execute_silently(%Q{git checkout -b #{ branch } master})
+    execute_silently(%Q{git checkout master})
   end
 end
 
 Given /^the local branch "([^\"]+)" is active$/ do |branch|
   in_current_dir do
-    %x{git checkout #{ branch }}
+    execute_silently(%Q{git checkout #{ branch }})
   end
 end
 
@@ -19,7 +23,7 @@ end
 
 Then /^the branch "([^\"]*)" should be merged into master$/ do |name|
   in_current_dir do
-    %x{git checkout master}
+    execute_silently(%Q{git checkout master})
     %x{git branch --no-merge}.split("\n").map(&:strip).should_not include(name)
   end
 end
