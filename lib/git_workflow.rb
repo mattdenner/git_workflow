@@ -1,12 +1,3 @@
-begin
-  # Ensure that the environment is setup correctly, unless we are being run from a Gem
-  # environment, in which case all of that should be taken care of by rubygems.
-  require 'bundler'
-  Bundler.setup
-rescue Bundler::GemfileNotFound => exception
-  # It's ok to ignore this as we're probably in a gem environment
-end
-
 require 'rest_client'
 require 'nokogiri'
 require 'builder'

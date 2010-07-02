@@ -14,7 +14,7 @@ Feature: Changing the name of a story
     Given the local branch "4056389_changes_to_pt_story_name_cause_branch_issues" exists
     And the default rake task will succeed
 
-    When I successfully run "git finish 4056389"
+    When I successfully execute "git finish 4056389"
 
     Then the branch "4056389_changes_to_pt_story_name_cause_branch_issues" should be merged into master
     And the owner of story 4056389 should be "Matthew Denner"
@@ -24,7 +24,7 @@ Feature: Changing the name of a story
     Given the local branch "4056389_changes_to_pt_story_name_cause_branch_issues" exists
     And the default rake task will succeed
 
-    When I successfully run "git start 4056389"
+    When I successfully execute "git start 4056389"
 
     Then the branch "4056389_changes_to_pt_story_name_cause_branch_issues" should be active
     And the owner of story 4056389 should be "Matthew Denner"

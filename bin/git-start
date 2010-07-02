@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-
-$:.push(File.expand_path(File.join(File.dirname(__FILE__), %w{.. lib})))
 require 'git_workflow'
 
 story_id = ARGV.first or raise StandardError, "Usage: git-start <STORY>"

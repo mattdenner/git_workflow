@@ -11,7 +11,7 @@ Feature: Need the ability to start a new branch
     Given the story 4049578 exists
     And the name of story 4049578 is "Need the ability to start a new branch"
 
-    When I successfully run "git start 4049578"
+    When I successfully execute "git start 4049578"
 
     Then the branch "4049578_need_the_ability_to_start_a_new_branch" should be active
     And the owner of story 4049578 should be "Matthew Denner"
