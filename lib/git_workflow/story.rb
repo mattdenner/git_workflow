@@ -1,6 +1,10 @@
 require 'rest_client'
-require 'nokogiri'
 require 'builder'
+
+# On MacOSX systems you can have a dodgy LibXML2 which Nokogiri warns about.  Hide this warning
+# by setting the following constant:
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true
+require 'nokogiri'
 
 class GitWorkflow
   def load_story_from_pivotal_tracker
