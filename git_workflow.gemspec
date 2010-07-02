@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
   s.executables   = [ 'git-start', 'git-finish' ]
   s.require_paths = [ 'lib' ]
   s.test_files    = [ 'spec/**/*.rb', 'features/**/*.feature', 'features/**/*.rb' ].map { |p| Dir[ p ] }.flatten
-  s.files         = [ "README.markdown", "Rakefile", "Gemfile", 'Gemfile.lock' ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
+  s.files         = [ "README.markdown", "Rakefile" ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
 end
