@@ -89,7 +89,7 @@ class GitWorkflow
     def finished!
       info("Marking story #{ self.story_id } as finished") do
         service! do |xml|
-          xml.current_state('finished')
+          xml.current_state(@story_type == 'chore' ? 'accepted' : 'finished')
         end
       end
     end
@@ -99,6 +99,7 @@ class GitWorkflow
     def load_story!
       info("Retrieving story information") do
         xml          = Nokogiri::XML(@service.get)
+        @story_type  = xml.xpath('/story/story_type/text()').to_s
         @name        = xml.xpath('/story/name/text()').to_s
         @story_id    = xml.xpath('/story/id/text()').to_s.to_i
         @description = xml.xpath('/story/description/text()').to_s
