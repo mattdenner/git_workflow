@@ -34,6 +34,7 @@ class GitWorkflow
 
     attr_reader :story_id
     attr_reader :name
+    attr_reader :description
 
     def initialize(service)
       @service = service
@@ -75,9 +76,10 @@ class GitWorkflow
   private
 
     def load_story!
-      xml       = Nokogiri::XML(@service.get)
-      @name     = xml.xpath('/story/name/text()').to_s
-      @story_id = xml.xpath('/story/id/text()').to_s.to_i
+      xml          = Nokogiri::XML(@service.get)
+      @name        = xml.xpath('/story/name/text()').to_s
+      @story_id    = xml.xpath('/story/id/text()').to_s.to_i
+      @description = xml.xpath('/story/description/text()').to_s
     end
 
     def service!(&block)

@@ -12,6 +12,12 @@ Given /^the name of story (\d+) is "([^\"]+)"$/ do |id,name|
   end
 end
 
+Given /^the description of story (\d+) is "([^\"]+)"$/ do |id,description|
+  for_story(id) do |story|
+    story.description = description
+  end
+end
+
 Then /^story (\d+) should be (started|finished)$/ do |id,state|
   for_story(id) do |story|
     story.current_state.should == state

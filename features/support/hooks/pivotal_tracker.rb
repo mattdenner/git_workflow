@@ -11,7 +11,7 @@ class SinatraWebService::SinatraStem
       xml.instruct!
       xml.story {
         xml.id(story.story_id, :type => 'integer')
-        [ :story_type, :current_state, :name, :owned_by ].each do |element|
+        [ :story_type, :current_state, :name, :owned_by, :description ].each do |element|
           xml.tag!(element, story.send(element))
         end
       }
