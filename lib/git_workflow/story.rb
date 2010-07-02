@@ -58,11 +58,12 @@ class GitWorkflow
       @branch_name ||= GitWorkflow::Configuration.instance.local_branch_convention.to(self)
     end
     
-    def create_branch!
+    def create_branch!(source = nil)
       info("Creating branch '#{ self.branch_name }'") do
-        command = 'git checkout '
-        command << '-b ' unless branch_already_exists?
-        command << self.branch_name
+        command = 'git checkout'
+        command << ' -b' unless branch_already_exists?
+        command << " #{ self.branch_name }"
+        command << " #{ source }" unless source.nil?
         execute_command(command)
       end
     end
