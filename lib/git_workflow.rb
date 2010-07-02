@@ -1,8 +1,3 @@
-require 'rest_client'
-require 'nokogiri'
-require 'builder'
-require 'singleton'
-
 require 'git_workflow/core_ext'
 require 'git_workflow/configuration'
 require 'git_workflow/story'
