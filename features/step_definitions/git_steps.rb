@@ -34,3 +34,47 @@ When /^I successfully execute "git (start|finish)([^\"]*)"$/ do |command,argumen
   lib_path     = File.join(root_path, 'lib')
   When %Q{I successfully run "ruby -I#{ lib_path } #{ real_command }#{ arguments }"}
 end
+
+Given /^I commit "([^\"]+)"$/ do |filename|
+  in_current_dir do
+    execute_silently(%Q{git add '#{ filename }'})
+    execute_silently(%Q{git commit -m 'Committing "#{ filename }"' '#{ filename }'})
+
+  end
+end
+
+Then /^the parent of branch "([^\"]+)" should be "([^\"]+)"$/ do |child,parent|
+  in_current_dir do 
+    # This is probably the most hacky piece of shit I've written so far!
+    execute_silently("git checkout #{ child }")
+    output = %x{git show-branch --topo-order --current}
+    lines  = output.split("\n")
+
+    # Determine the branches that are matching and their offset in the output lines.
+    matchers = []
+    until lines.empty?
+      line = lines.shift
+      break if line =~ /^---.*$/
+
+      if line =~ /^(\s*)\*\s+\[#{ child }\]/
+        matchers[ $1.length ] = '\*'
+      elsif line =~ /^(\s*)!\s\[#{ parent }\]/
+        matchers[ $1.length ] = '\+'
+      end
+    end
+    raise StandardError, "Cannot find branches in list:\n#{ output }" unless [ '\*', '\+' ].all? { |m| matchers.include?(m) }
+    
+    # Find a line that matches the appropriate commit.  Basically when the two branches
+    # share a commit.  This doesn't work if the branches are intermerging.
+    regexp       = Regexp.new("^#{ matchers.map { |m| m || ' ' }.join }.+")
+
+    matched_line = nil
+    until lines.empty?
+      line = lines.shift
+      next unless line =~ regexp
+      matched_line = line
+      break
+    end
+    raise StandardError, "#{ child } appears not to be related to #{ parent }" if matched_line.nil?
+  end
+end
