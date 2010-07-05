@@ -1,6 +1,6 @@
 require 'singleton'
 
-class GitWorkflow
+module GitWorkflow
   class Configuration
     include Singleton
     extend Execution

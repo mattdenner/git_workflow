@@ -2,11 +2,4 @@
 require 'rubygems'
 require 'git_workflow'
 
-story_id = ARGV.shift or raise StandardError, "Usage: git-start <STORY>"
-GitWorkflow.story(story_id) do |story|
-  story.create_branch!(ARGV.first)
-  story.started!
-  
-  $stdout.puts "Story #{ story.story_id }: #{ story.name }"
-  $stdout.puts story.description
-end
+GitWorkflow::Commands::Start.new(ARGV).execute

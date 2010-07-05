@@ -24,20 +24,27 @@ describe GitWorkflow::Configuration do
   end
 end
 
-describe GitWorkflow do
+class GitWorkflow::Commands::Finish
+  public :determine_current_branch
+  public :extract_story_from_branch
+end
+
+describe GitWorkflow::Commands::Finish do
   before(:each) do
     @configuration = mock('configuration')
     GitWorkflow::Configuration.stub!(:instance).and_return(@configuration)
+
+    @command = described_class.new([])
   end
 
-  describe '.determine_current_branch' do
+  describe '#determine_current_branch' do
     it 'delegates to the configuration' do
       @configuration.should_receive(:active_branch).and_return(:ok)
-      GitWorkflow.determine_current_branch.should == :ok 
+      @command.determine_current_branch.should == :ok 
     end
   end
 
-  describe '.extract_story_from_branch' do
+  describe '#extract_story_from_branch' do
     before(:each) do
       @convention = mock('convention')
       @configuration.stub!(:local_branch_convention).and_return(@convention)
@@ -45,7 +52,7 @@ describe GitWorkflow do
 
     it 'uses the branch convention' do
       @convention.should_receive(:from).with('12345_this_branch_matches').and_return(12345)
-      GitWorkflow.extract_story_from_branch('12345_this_branch_matches').should == 12345
+      @command.extract_story_from_branch('12345_this_branch_matches').should == 12345
     end
   end
 end
