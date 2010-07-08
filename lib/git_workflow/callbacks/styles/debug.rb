@@ -5,6 +5,23 @@ module GitWorkflow
   module Callbacks
     module Styles
       module Debug
+        def self.setup(start_command = GitWorkflow::Commands::Start, finish_command = GitWorkflow::Commands::Finish)
+          start_command.instance_eval do
+            extend GitWorkflow::Callbacks::Styles::Debug
+            debug_method(:create_branch_for_story!)
+            debug_method(:start_story_on_pivotal_tracker!)
+          end
+
+          finish_command.instance_eval do
+            extend GitWorkflow::Callbacks::Styles::Debug
+            debug_method(:merge_story_into!)
+            debug_method(:finish_story_on_pivotal_tracker!)
+          end
+
+          require 'git_workflow/logging'
+          GitWorkflow::Logging.logger.level = Logger::DEBUG
+        end
+
         def debug_method(method)
           chain_methods(method, :debug) do |with_chain_method, without_chain_method|
             class_eval <<-END_OF_DEBUG_METHOD
@@ -20,21 +37,4 @@ module GitWorkflow
       end
     end
   end
-
-  module Commands
-    class Start
-      extend GitWorkflow::Callbacks::Styles::Debug
-      debug_method(:create_branch_for_story!)
-      debug_method(:start_story_on_pivotal_tracker!)
-    end
-
-    class Finish
-      extend GitWorkflow::Callbacks::Styles::Debug
-      debug_method(:merge_story_into!)
-      debug_method(:finish_story_on_pivotal_tracker!)
-    end
-  end
 end
-
-require 'git_workflow/logging'
-GitWorkflow::Logging.logger.level = Logger::DEBUG

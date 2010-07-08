@@ -13,8 +13,11 @@ module GitWorkflow
         end
       end
 
+    private
+
       def run_tests(*rake_test_tasks)
-        # TODO: rake #{ rake_test_tasks.join(' ') }
+        execute_command([ 'rake', *rake_test_tasks ].join(' '))
+      rescue Execution::CommandFailure => exception
         return false
       end
 

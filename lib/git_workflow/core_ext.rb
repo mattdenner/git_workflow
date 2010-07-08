@@ -23,24 +23,37 @@ class String
   end
 
   def underscore
-    self.gsub(/(.)([A-Z])/, '\1_\2').downcase
+    self.split('::').map { |v| v.gsub(/(.)([A-Z])/, '\1_\2') }.join('/').downcase
   end
 
   def camelize
-    self.gsub(/(?:^|_)(.)/) { $1.upcase }
+    self.split('/').map { |v| v.gsub(/(?:^|_)(.)/) { $1.upcase } }.join('::')
   end
 
   def constantize
-    self.split('::').inject(Object) do |current,constant|
+    self.camelize.split('::').inject(Object) do |current,constant|
       current.const_get(constant) or current.const_missing(constant)
     end
   end
 end
 
 module Execution
+  class CommandFailure < StandardError
+    attr_reader :result
+
+    def initialize(command, result)
+      super("Command '#{ command }' failed")
+      @result = result
+    end
+
+    def raise_if_required!
+      raise self unless @result.exitstatus == 0
+    end
+  end
+
   def execute_command(command)
     rc = IO.popen(command) { |pipe| pipe.read }
-    raise StandardError, "Command '#{ command }' failed" unless $?.exitstatus == 0
+    CommandFailure.new(command, $?).raise_if_required!
     rc
   end
 end
@@ -58,6 +71,13 @@ class Module
     chain_methods(method, chain) do |with_chain_method, without_chain_method|
       alias_method(without_chain_method, method)
       alias_method(method, with_chain_method)
+    end
+  end
+
+  def unalias_method_chain(method, chain)
+    chain_methods(method, chain) do |with_chain_method, without_chain_method|
+      alias_method(method, without_chain_method)
+      undef_method(without_chain_method)
     end
   end
 end

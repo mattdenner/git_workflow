@@ -3,5 +3,8 @@ require 'git_workflow/callbacks/remote_git_branch_support'
 
 # Automatically load the callbacks associated with the current settings
 require 'git_workflow/configuration'
-callbacks = GitWorkflow::Configuration.get_config_value_for('workflow.callbacks')
-require "git_workflow/callbacks/styles/#{ callbacks }" unless callbacks.blank?
+unless (callbacks = GitWorkflow::Configuration.get_config_value_for('workflow.callbacks')).blank?
+  callback_name = "git_workflow/callbacks/styles/#{ callbacks }"
+  require callback_name
+  callback_name.constantize.setup
+end

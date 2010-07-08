@@ -6,6 +6,14 @@ module GitWorkflow
   module Callbacks
     module Styles
       module Sanger
+        def self.setup(into_class = GitWorkflow::Commands::Finish)
+          into_class.instance_eval do
+            include GitWorkflow::Callbacks::TestCodeSupport
+            include GitWorkflow::Callbacks::RemoteGitBranchSupport
+            include GitWorkflow::Callbacks::Styles::Sanger
+          end
+        end
+
         def self.included(base)
           base.alias_method_chain(:merge_story_into!, :sanger_callbacks)
         end
@@ -18,14 +26,6 @@ module GitWorkflow
           push_current_branch_to(branch_name)
         end
       end
-    end
-  end
-
-  module Commands
-    class Finish
-      include GitWorkflow::Callbacks::TestCodeSupport
-      include GitWorkflow::Callbacks::RemoteGitBranchSupport
-      include GitWorkflow::Callbacks::Styles::Sanger
     end
   end
 end
