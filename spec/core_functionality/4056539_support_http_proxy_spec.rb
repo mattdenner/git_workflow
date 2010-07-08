@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe GitWorkflow do
+describe GitWorkflow::Commands::Base do
   describe '.value_of_environment_variable' do
     before(:each) do
       ENV['somevariable'] = 'this is the value'
@@ -11,29 +11,30 @@ describe GitWorkflow do
     end
 
     it 'returns the value of the environment variable' do
-      GitWorkflow.value_of_environment_variable('somevariable').should == 'this is the value'
+      described_class.value_of_environment_variable('somevariable').should == 'this is the value'
     end
   end
 
   describe '.enable_http_proxy_if_present' do
+    after(:each) do
+      described_class.enable_http_proxy_if_present
+    end
+
     it 'uses the $http_proxy environment variable first' do
-      GitWorkflow.stub!(:value_of_environment_variable).with('http_proxy').and_return('http_proxy value')
+      described_class.stub!(:value_of_environment_variable).with('http_proxy').and_return('http_proxy value')
       RestClient.should_receive(:proxy=).with('http_proxy value')
-      GitWorkflow.enable_http_proxy_if_present
     end
 
     it 'falls back to $HTTP_PROXY' do
-      GitWorkflow.stub!(:value_of_environment_variable).with('http_proxy').and_return(nil)
-      GitWorkflow.stub!(:value_of_environment_variable).with('HTTP_PROXY').and_return('HTTP_PROXY value')
+      described_class.stub!(:value_of_environment_variable).with('http_proxy').and_return(nil)
+      described_class.stub!(:value_of_environment_variable).with('HTTP_PROXY').and_return('HTTP_PROXY value')
       RestClient.should_receive(:proxy=).with('HTTP_PROXY value')
-      GitWorkflow.enable_http_proxy_if_present
     end
 
     it 'does not set the HTTP proxy if neither is set' do
-      GitWorkflow.stub!(:value_of_environment_variable).with('http_proxy').and_return(nil)
-      GitWorkflow.stub!(:value_of_environment_variable).with('HTTP_PROXY').and_return(nil)
+      described_class.stub!(:value_of_environment_variable).with('http_proxy').and_return(nil)
+      described_class.stub!(:value_of_environment_variable).with('HTTP_PROXY').and_return(nil)
       RestClient.should_receive(:proxy=).with(anything).never
-      GitWorkflow.enable_http_proxy_if_present
     end
   end
 
@@ -41,13 +42,13 @@ describe GitWorkflow do
     it_should_behave_like 'it needs configuration'
 
     before(:each) do
-      @workflow = GitWorkflow.new('story_id')
+      @command = described_class.new
     end
 
     it 'enables the HTTP proxy' do
-      GitWorkflow.should_receive(:enable_http_proxy_if_present).once
+      described_class.should_receive(:enable_http_proxy_if_present).once
       RestClient::Resource.stub!(:new).with(any_args).and_return(:ok)
-      @workflow.pivotal_tracker_service
+      @command.pivotal_tracker_service_for('story_id')
     end
   end
 end
