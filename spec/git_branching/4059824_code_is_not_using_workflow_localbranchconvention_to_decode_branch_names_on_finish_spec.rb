@@ -9,8 +9,8 @@ end
 describe GitWorkflow::Configuration do
   describe '#local_branch_convention' do
     before(:each) do
-      GitWorkflow::Configuration.should_receive(:get_config_value_for!).with('workflow.localbranchconvention').once.and_return('${story.story_id}_${story.name}')
       @configuration = GitWorkflow::Configuration.instance_for_testing
+      @configuration.should_receive(:get_config_value_for!).with('workflow.localbranchconvention').once.and_return('${story.story_id}_${story.name}')
     end
 
     it 'uses the workflow.localbranchconvention configuration value' do
@@ -25,7 +25,6 @@ describe GitWorkflow::Configuration do
 end
 
 class GitWorkflow::Commands::Finish
-  public :determine_current_branch
   public :extract_story_from_branch
 end
 
@@ -35,13 +34,6 @@ describe GitWorkflow::Commands::Finish do
     GitWorkflow::Configuration.stub!(:instance).and_return(@configuration)
 
     @command = described_class.new([])
-  end
-
-  describe '#determine_current_branch' do
-    it 'delegates to the configuration' do
-      @configuration.should_receive(:active_branch).and_return(:ok)
-      @command.determine_current_branch.should == :ok 
-    end
   end
 
   describe '#extract_story_from_branch' do

@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rest-client', :require => 'rest_client'
 gem 'nokogiri'
 gem 'builder'
+gem 'POpen4', :require => 'popen4'
 
 # Gems for the test environment
 group :test do

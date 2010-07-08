@@ -28,18 +28,24 @@ Then /^the branch "([^\"]*)" should be merged into master$/ do |name|
   end
 end
 
-When /^I successfully execute "git (start|finish)([^\"]*)"$/ do |command,arguments|
+Then /^the branch "([^\"]+)" should not be merged into master$/ do |name|
+  in_current_dir do
+    execute_silently(%Q{git checkout master})
+    %x{git branch --no-merge}.split("\n").map(&:strip).should include(name)
+  end
+end
+
+When /^I( successfully)? execute "git (start|finish)([^\"]*)"$/ do |success,command,arguments|
   root_path    = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
   real_command = File.join(root_path, 'bin', "git-#{ command }")
   lib_path     = File.join(root_path, 'lib')
-  When %Q{I successfully run "ruby -I#{ lib_path } #{ real_command }#{ arguments }"}
+  When %Q{I#{ success } run "ruby -I#{ lib_path } -rrubygems #{ real_command }#{ arguments }"}
 end
 
 Given /^I commit "([^\"]+)"$/ do |filename|
   in_current_dir do
     execute_silently(%Q{git add '#{ filename }'})
     execute_silently(%Q{git commit -m 'Committing "#{ filename }"' '#{ filename }'})
-
   end
 end
 

@@ -31,19 +31,35 @@ describe GitWorkflow::Callbacks::Styles::Mine do
 
   describe '#merge_story_into_with_my_callbacks' do
     before(:each) do
+      @story = mock('Story')
+      @story.stub(:branch_name).and_return('story_branch')
+
+      @callbacks.should_receive(:in_git_branch).with('story_branch').and_yield.ordered
       @callbacks.should_receive(:run_tests!).with(:spec, :features).ordered
-      @callbacks.should_receive(:merge_story_into_without_my_callbacks!).with(:story, anything).ordered
-      @callbacks.should_receive(:run_tests_with_recovery!).with(:spec, :features).ordered
+    end
+
+    after(:each) do
+      @callbacks.merge_story_into_with_my_callbacks!(@story, @target_branch)
     end
 
     it 'runs the tests but not the push if non-master branch' do
-      @callbacks.should_not_receive(:push_current_branch_to).with('non-master')
-      @callbacks.merge_story_into_with_my_callbacks!(:story, 'non-master')
+      @target_branch = 'non-master'
+
+      @callbacks.should_receive(:in_git_branch).with(@target_branch).and_yield.ordered
+      @callbacks.should_receive(:merge_story_into_without_my_callbacks!).with(@story, anything).ordered
+      @callbacks.should_receive(:run_tests_with_recovery!).with(:spec, :features).ordered
+
+      @callbacks.should_not_receive(:push_current_branch_to).with('non-master').ordered
     end
 
     it 'runs the tests and the push if master branch' do
+      @target_branch = 'master'
+
+      @callbacks.should_receive(:in_git_branch).with(@target_branch).and_yield.ordered
+      @callbacks.should_receive(:merge_story_into_without_my_callbacks!).with(@story, anything).ordered
+      @callbacks.should_receive(:run_tests_with_recovery!).with(:spec, :features).ordered
+
       @callbacks.should_receive(:push_current_branch_to).with('master').ordered
-      @callbacks.merge_story_into_with_my_callbacks!(:story, 'master')
     end
   end
 
@@ -114,12 +130,12 @@ describe GitWorkflow::Callbacks::TestCodeSupport do
 
   describe '#run_tests' do
     it 'executes the given rake tasks' do
-      @callbacks.should_receive(:execute_command).with('rake task1 task2').and_return(:ok)
-      @callbacks.send(:run_tests, :task1, :task2).should == :ok
+      @callbacks.should_receive(:execute_command_with_output_handling).with('rake task1 task2').and_return(:ok)
+      @callbacks.send(:run_tests, :task1, :task2).should == true
     end
 
     it 'raises if the command fails' do
-      @callbacks.should_receive(:execute_command).with(anything).and_raise(Execution::CommandFailure.new('foo', :failure))
+      @callbacks.should_receive(:execute_command_with_output_handling).with(anything).and_raise(Execution::CommandFailure.new('foo', :failure))
       @callbacks.send(:run_tests).should == false
     end
   end
