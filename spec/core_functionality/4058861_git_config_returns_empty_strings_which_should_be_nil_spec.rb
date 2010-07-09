@@ -1,11 +1,26 @@
 require 'spec_helper'
 
-describe GitWorkflow::Configuration do
-  describe '.get_config_value_for' do
+class GitWorkflow::Git::Repository
+  def self.for_testing
+    new
+  end
+end
+
+describe GitWorkflow::Git::Repository do
+  before(:each) do
+    @repository = described_class.for_testing
+  end
+
+  describe '#config_get' do
+    it 'raises ConfigError on command failure' do
+      @repository.should_receive(:execute_command).with(anything).and_raise(Execution::CommandFailure.new('command', :failure))
+      lambda { @repository.config_get('key') }.should raise_error(GitWorkflow::Git::Repository::ConfigError)
+    end
+
     context 'when command succeeds' do
       after(:each) do
-        described_class.should_receive(:execute_command).with('git config key').and_return(@value)
-        described_class.get_config_value_for('key').should == @expected
+        @repository.should_receive(:execute_command).with('git config key').and_return(@value)
+        @repository.config_get('key').should == @expected
       end
 
       it 'returns the value that is set' do
@@ -20,10 +35,25 @@ describe GitWorkflow::Configuration do
         @value, @expected = '', nil
       end
     end
+  end
+end
 
-    it 'returns nil if the command fails' do
-      described_class.should_receive(:execute_command).with('git config key').and_raise(StandardError)
-      described_class.get_config_value_for('key').should == nil
+describe GitWorkflow::Git do
+  before(:each) do
+    @git, @repository = Class.new, mock('Repository')
+    @git.send(:extend, GitWorkflow::Git)
+    @git.stub(:repository).and_return(@repository)
+  end
+
+  describe '#get_config_value_for' do
+    it 'returns whatever is set' do
+      @repository.should_receive(:config_get).with('key').and_return(:ok)
+      @git.get_config_value_for('key').should == :ok
+    end
+
+    it 'returns nil for failure' do
+      @repository.should_receive(:config_get).with('key').and_raise(GitWorkflow::Git::Repository::ConfigError)
+      @git.get_config_value_for('key').should == nil
     end
   end
 end

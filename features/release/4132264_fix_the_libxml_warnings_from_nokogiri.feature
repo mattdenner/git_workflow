@@ -17,7 +17,6 @@ Feature: Fix the LibXML warnings from Nokogiri
 
   Scenario: Finishing a branch
     Given the local branch "4132264_fix_the_libxml_warnings_from_nokogiri" exists
-    And the default rake task will succeed
 
     When I successfully execute "git finish 4132264"
 

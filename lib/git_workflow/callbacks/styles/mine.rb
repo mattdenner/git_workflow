@@ -19,10 +19,14 @@ module GitWorkflow
         end
 
         def merge_story_into_with_my_callbacks!(story, branch_name, &block)
-          run_tests!(:spec, :features)
-          merge_story_into_without_my_callbacks!(story, branch_name, &block)
-          run_tests_with_recovery!(:spec, :features)
-          push_current_branch_to(branch_name) if branch_name == 'master'
+          in_git_branch(story.branch_name) do
+            run_tests!(:spec, :features)
+          end
+          in_git_branch(branch_name) do
+            merge_story_into_without_my_callbacks!(story, branch_name, &block)
+            run_tests_with_recovery!(:spec, :features)
+            push_current_branch_to(branch_name) if branch_name == 'master'
+          end
         end
       end
     end

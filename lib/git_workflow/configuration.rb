@@ -1,11 +1,14 @@
 require 'singleton'
+require 'git_workflow/git'
 
 module GitWorkflow
   class Configuration
     include Singleton
-    extend Execution
+    include GitWorkflow::Git
 
     class Convention
+      include GitWorkflow::Git
+
       REGEXP_STORY_ID   = /\$\{\s*story\.story_id\s*\}/
       REGEXP_EVALUATION = /\$\{([^\}]+)\}/
 
@@ -28,14 +31,14 @@ module GitWorkflow
     private
 
       def use_existing_branch_for(story)
-        GitWorkflow::Configuration.instance.branches.each do |branch,active|
+        repository.branches.detect do |branch|
           begin
-            return branch if from(branch) == story.story_id
+            from(branch) == story.story_id
           rescue StandardError => exception
             # Ignore, as this is definitely not the branch!
+            false
           end
         end
-        nil
       end
 
       def generate_new_branch_name_for(story)
@@ -58,35 +61,5 @@ module GitWorkflow
     def api_token
       @api_token ||= get_config_value_for!('pt.token')
     end
-
-    def branches
-      execute_command('git branch').split("\n").map do |branch_line|
-        match = branch_line.match(/^(\*)?\s{1,2}([^\s]+)$/) or raise StandardError, "Can't match branch line '#{ branch_line }'"
-        [ match[2], (match[1] && true) || false ]
-      end
-    end
-
-    def active_branch
-      active_details = branches.rassoc(true) or raise StandardError, 'You do not appear to be on a working branch'
-      active_details.first
-    end
-
-  private
-
-    class << self
-      def get_config_value_for(key)
-        value = execute_command("git config #{ key }").strip
-        value.empty? ? nil : value
-      rescue StandardError => exception
-        nil
-      end
-
-      def get_config_value_for!(key)
-        get_config_value_for(key) or raise StandardError, "Required configuration setting '#{ key }' is unset"
-      end
-    end
-    delegates_to_class(:get_config_value_for)
-    delegates_to_class(:get_config_value_for!)
-    delegates_to_class(:execute_command)
   end
 end

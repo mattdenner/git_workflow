@@ -1,6 +1,7 @@
 require 'git_workflow/core_ext'
 require 'git_workflow/logging'
 require 'git_workflow/configuration'
+require 'git_workflow/git'
 require 'git_workflow/story'
 require 'rest_client'
 
@@ -9,6 +10,7 @@ module GitWorkflow
     class Base
       include Execution
       include GitWorkflow::Logging
+      include GitWorkflow::Git
 
     protected
 

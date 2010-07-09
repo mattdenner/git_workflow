@@ -37,6 +37,8 @@ class String
   end
 end
 
+require 'popen4'
+
 module Execution
   class CommandFailure < StandardError
     attr_reader :result
@@ -52,9 +54,16 @@ module Execution
   end
 
   def execute_command(command)
-    rc = IO.popen(command) { |pipe| pipe.read }
-    CommandFailure.new(command, $?).raise_if_required!
-    rc
+    command_output = nil
+    execute_command_with_output_handling(command) { |stdout, _, _| command_output = stdout.read }
+    command_output
+  end
+
+  def execute_command_with_output_handling(command, &block)
+    exit_status = POpen4.popen4(command) do |stdout, stderr, stdin, pid|
+      yield(stdout, stderr, stdin)
+    end
+    CommandFailure.new(command, exit_status).raise_if_required!
   end
 end
 

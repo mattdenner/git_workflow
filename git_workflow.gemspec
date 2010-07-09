@@ -4,12 +4,13 @@ Gem::Specification.new do |s|
   s.specification_version     = 3
 
   s.name    = %q{git_workflow}
-  s.version = '0.0.2'
+  s.version = '0.0.3'
   
   # Get the dependencies from Bundler ...
   s.add_dependency('rest-client', [ '>= 1.5.1' ])
-  s.add_dependency('nokogiri', [ '>= 1.4.2' ])
-  s.add_dependency('builder', [ '>= 2.1.2' ])
+  s.add_dependency('nokogiri',    [ '>= 1.4.2' ])
+  s.add_dependency('builder',     [ '>= 2.1.2' ])
+  s.add_dependency('POpen4',      [ '>= 0.1.4' ])
 
   s.authors     = ["Matthew Denner"]
   s.date        = %q{2010-07-01}
