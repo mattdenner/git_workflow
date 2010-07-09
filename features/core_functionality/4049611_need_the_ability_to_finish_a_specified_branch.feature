@@ -11,7 +11,6 @@ Feature: Need the ability to finish a specified branch
     And the name of story 4049611 is "Need the ability to start a new branch"
 
     Given the local branch "4049611_need_the_ability_to_start_a_new_branch" exists
-    And the default rake task will succeed
 
     When I successfully execute "git finish 4049611"
 

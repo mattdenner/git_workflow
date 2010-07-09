@@ -1,5 +1,5 @@
 # rake features FEATURE=features/extensions/4069174_investigate_the_effort_required_to_add_pre_amp_post_hooks.feature
-@extensions @needs_service
+@hooks @needs_service
 Feature: Adding pre-and-post hooks
   Background:
     Given my Pivotal Tracker username is "Matthew Denner"
@@ -20,7 +20,6 @@ Feature: Adding pre-and-post hooks
 
   Scenario: Hooked into finish
     Given the local branch "4069174_investigate_the_effort_required_to_add_pre_amp_post_hooks" exists
-    And the default rake task will succeed
 
     When I successfully execute "git finish 4069174"
 

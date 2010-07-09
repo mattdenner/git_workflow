@@ -12,7 +12,6 @@ Feature: Finishing a chore means accepting it
     And the name of story 4133291 is "Chores go straight to 'accepted' not to 'finished'"
 
     Given the local branch "4133291_chores_go_straight_to_accepted_not_to_finished" exists
-    And the default rake task will succeed
 
     When I successfully execute "git finish 4133291"
 

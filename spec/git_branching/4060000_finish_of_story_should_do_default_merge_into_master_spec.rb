@@ -14,8 +14,7 @@ describe GitWorkflow::Commands::Finish do
 
     it 'does the default merge into the branch' do
       @story.stub!(:branch_name).and_return('my_branch')
-      @command.should_receive(:execute_command).with('git checkout master')
-      @command.should_receive(:execute_command).with('git merge my_branch')
+      @command.should_receive(:merge_branch).with('my_branch', 'master')
 
       @command.merge_story_into!(@story, 'master')
     end

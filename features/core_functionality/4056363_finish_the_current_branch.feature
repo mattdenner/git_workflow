@@ -13,7 +13,6 @@ Feature: Finish the current branch
 
     Given the local branch "4056363_finish_the_current_branch" exists
     And the local branch "4056363_finish_the_current_branch" is active
-    And the default rake task will succeed
 
     When I successfully execute "git finish"
 

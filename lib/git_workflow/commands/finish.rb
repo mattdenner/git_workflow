@@ -19,10 +19,7 @@ module GitWorkflow
     private
 
       def merge_story_into!(story, branch)
-        info("Merging '#{ story.branch_name }' into '#{ branch }'") do
-          execute_command("git checkout #{ branch }")
-          execute_command("git merge #{ story.branch_name }")
-        end
+        merge_branch(story.branch_name, branch)
       end
 
       def finish_story_on_pivotal_tracker!(story)
@@ -34,11 +31,7 @@ module GitWorkflow
       end
 
       def story_or_current_branch(id, &block)
-        story(id || extract_story_from_branch(determine_current_branch), &block)
-      end
-
-      def determine_current_branch
-        GitWorkflow::Configuration.instance.active_branch
+        story(id || extract_story_from_branch(repository.current_branch), &block)
       end
 
       def extract_story_from_branch(branch)

@@ -21,17 +21,7 @@ module GitWorkflow
     private
 
       def create_branch_for_story!(story, source = nil)
-        info("Creating branch '#{ story.branch_name }'") do
-          command = 'git checkout'
-          command << ' -b' unless branch_already_exists?(story)
-          command << " #{ story.branch_name }"
-          command << " #{ source }" unless source.nil?
-          execute_command(command)
-        end
-      end
-
-      def branch_already_exists?(story)
-        GitWorkflow::Configuration.instance.branches.find { |name,_| name == story.branch_name }
+        checkout_or_create_branch(story.branch_name, source)
       end
 
       def start_story_on_pivotal_tracker!(story)
