@@ -19,4 +19,4 @@ Feature: Output from rake tests should be seen
     When I execute "git finish"
 
     Then the stdout should contain "Running spec"
-    And the stderr should contain "Failing spec"
+    And the stdout should contain "Failing spec"

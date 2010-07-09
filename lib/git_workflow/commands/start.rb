@@ -4,8 +4,10 @@ module GitWorkflow
   module Commands
     class Start < Base
       def initialize(command_line_arguments)
-        @story_id, @parent_branch = command_line_arguments
-        raise StandardError, "Usage: git-start <STORY> [<PARENT>]" if @story_id.nil?
+        super(command_line_arguments) do |remaining_arguments|
+          @story_id, @parent_branch = remaining_arguments
+          raise InvalidCommandLine, 'The command line is invalid' if @story_id.nil?
+        end
       end
 
       def execute
@@ -30,6 +32,10 @@ module GitWorkflow
             xml.current_state(story.start_state)
           end
         end
+      end
+
+      def usage_info(options)
+        options.banner = 'Usage: git start <PT story number> [<parent branch>]'
       end
     end
   end
