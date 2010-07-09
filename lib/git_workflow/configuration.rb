@@ -54,6 +54,10 @@ module GitWorkflow
       @local_branch_convention ||= Convention.new(get_config_value_for!('workflow.localbranchconvention'))
     end
 
+    def remote_branch_convention
+      @remote_branch_convention ||= Convention.new(get_config_value_for!('workflow.remotebranchconvention'))
+    end
+
     def project_id
       @project_id ||= get_config_value_for!('pt.projectid')
     end

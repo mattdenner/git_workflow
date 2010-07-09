@@ -63,6 +63,12 @@ module GitWorkflow
         raise ConfigError, "Could not retrieve '#{ key }' configuration setting"
       end
 
+      def push(branch)
+        execute_command("git push origin #{ branch }")
+      rescue Execution::CommandFailure => exception
+        raise BranchError, "Unable to push branch '#{ branch }'"
+      end
+
     private
 
       def maintain_current_branch(branch, &block)

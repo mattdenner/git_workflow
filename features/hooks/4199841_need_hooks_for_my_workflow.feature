@@ -1,5 +1,5 @@
 # rake features FEATURE=features/hooks/4199841_need_hooks_for_my_workflow.feature
-@hooks @needs_service @my_workflow
+@hooks @needs_service @needs_remote_repository @my_workflow
 Feature: Need hooks for my workflow
   Background:
     Given my Pivotal Tracker username is "Matthew Denner"
@@ -39,12 +39,8 @@ Feature: Need hooks for my workflow
 
 #  @wip
 #  Scenario: Drops into shell if tests fail after merge
-# 
-#  @wip
-#  Scenario: Pushes master branch
 
-  @announce
-  Scenario: Completely successful
+  Scenario: Completely successful pushes master to the remote repository
     Given the local branch "4199841_need_hooks_for_my_workflow" is active
     And the rake task "spec" will succeed
     And the rake task "features" will succeed
@@ -52,5 +48,7 @@ Feature: Need hooks for my workflow
     When I execute "git finish"
 
     Then the stderr should not contain "The tests failed, please fix and try again"
+    And the stderr should not contain "Unable to push branch 'master'"
     And the branch "4199841_need_hooks_for_my_workflow" should be merged into master
     And story 4199841 should be finished
+    And the local and remote "master" branches should agree

@@ -84,3 +84,15 @@ Then /^the parent of branch "([^\"]+)" should be "([^\"]+)"$/ do |child,parent|
     raise StandardError, "#{ child } appears not to be related to #{ parent }" if matched_line.nil?
   end
 end
+
+Then /^the local and remote "([^\"]+)" branches should agree$/ do |branch|
+  in_current_dir do
+    ref_to_sha = %x{git show-ref}.split("\n").inject({}) do |ref_to_sha, line|
+      match = line.match(%r{^([a-f0-9]+)\s+refs/(.+)$}) or raise StandardError, "Cannot parse ref line '#{ line }'"
+      ref_to_sha[ match[ 2 ] ] = match[ 1 ]
+      ref_to_sha
+    end
+
+    ref_to_sha[ "heads/#{ branch }" ].should == ref_to_sha[ "remotes/origin/#{ branch }" ]
+  end
+end
