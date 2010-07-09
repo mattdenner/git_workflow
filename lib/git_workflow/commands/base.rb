@@ -3,6 +3,7 @@ require 'git_workflow/logging'
 require 'git_workflow/configuration'
 require 'git_workflow/git'
 require 'git_workflow/story'
+require 'git_workflow/command_line'
 require 'rest_client'
 
 module GitWorkflow
@@ -11,6 +12,11 @@ module GitWorkflow
       include Execution
       include GitWorkflow::Logging
       include GitWorkflow::Git
+      include GitWorkflow::CommandLine
+
+      def initialize(command_line_arguments, &block)
+        parse_command_line(command_line_arguments, &block)
+      end
 
     protected
 
@@ -46,6 +52,10 @@ module GitWorkflow
 
       def self.pivotal_tracker_url_for(project_id, story_id)
         "http://www.pivotaltracker.com/services/v3/projects/#{ project_id }/stories/#{ story_id }"
+      end
+
+      def command_specific_options(options)
+        options.separator '    This command has no specific options'
       end
     end
   end

@@ -6,6 +6,7 @@ module GitWorkflow
     class Repository
       include Singleton
       include Execution
+      include GitWorkflow::Logging
 
       RepositoryError = Class.new(StandardError)
       BranchError     = Class.new(RepositoryError)
@@ -23,7 +24,9 @@ module GitWorkflow
       def checkout(branch)
         maintain_current_branch(branch) do
           begin
-            execute_command("git checkout #{ branch }")
+            info("Checking out branch '#{ branch }'") do
+              execute_command("git checkout #{ branch }")
+            end
           rescue Execution::CommandFailure => exception
             raise CheckoutError, "Unable to checkout branch '#{ branch }'"
           end
@@ -33,9 +36,11 @@ module GitWorkflow
       def create(branch, source = nil)
         maintain_current_branch(branch) do
           begin
-            command = "git checkout -b #{ branch }"
-            command << " #{ source }" unless source.nil?
-            execute_command(command)
+            info("Creating branch '#{ branch }'") do
+              command = "git checkout -b #{ branch }"
+              command << " #{ source }" unless source.nil?
+              execute_command(command)
+            end
           rescue Execution::CommandFailure => exception
             raise CheckoutError, "Unable to create branch '#{ branch }'"
           end
@@ -83,14 +88,24 @@ module GitWorkflow
 
     def in_git_branch(target_branch, &block)
       current_branch = repository.current_branch
-      repository.checkout(target_branch) unless target_branch == current_branch
-      yield
-      repository.checkout(current_branch) unless target_branch == current_branch
+      if current_branch == target_branch
+        yield
+      else
+        info("Temporarily switching to branch '#{ target_branch }'")
+
+        repository.checkout(target_branch)
+        yield
+        repository.checkout(current_branch)
+
+        info("Switched back to '#{ current_branch }'")
+      end
     end
 
     def merge_branch(source_branch, target_branch)
-      repository.checkout(target_branch)
-      repository.merge(source_branch)
+      info("Merging branch '#{ source_branch }' into '#{ target_branch }'") do
+        repository.checkout(target_branch)
+        repository.merge(source_branch)
+      end
     end
 
     def checkout_or_create_branch(branch, source = nil)

@@ -9,7 +9,7 @@ describe GitWorkflow::Commands::Base do
     it_should_behave_like 'it needs configuration'
 
     before(:each) do
-      @command     = described_class.new
+      @command     = described_class.new([]) { |*args| }
       @expectation = RestClient::Resource.should_receive(:new)
     end
 
