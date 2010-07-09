@@ -15,6 +15,10 @@ Given /^my (local|remote) branch naming convention is "((?:(?:(?:\$\{[a-z][a-z_]
   git_configure("workflow.#{ branch }branchconvention", convention)
 end
 
+Given /^I have "([^\"]+)" callbacks enabled$/ do |callbacks|
+  git_configure("workflow.callbacks", callbacks)
+end
+
 def git_configure(key, value)
   in_current_dir do
     %x{git config '#{ key }' '#{ value }'}

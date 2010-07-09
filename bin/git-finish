@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'git_workflow'
+require 'git_workflow/callbacks'
 
-GitWorkflow.story_or_current_branch(ARGV.first) do |story|
-  story.merge_into!('master')
-  story.finished!
-end
+GitWorkflow::Commands::Finish.new(ARGV).execute

@@ -13,18 +13,3 @@ describe GitWorkflow::Configuration do
     end
   end
 end
-
-describe GitWorkflow do
-  describe '#load_configuration' do
-    it 'gets the configuration values correctly' do
-      configuration = mock('configuration')
-      configuration.should_receive(:username).and_return('username')
-      configuration.should_receive(:project_id).and_return('project_id')
-      configuration.should_receive(:api_token).and_return('api_token')
-      configuration.should_receive(:local_branch_convention).and_return('convention')
-      GitWorkflow::Configuration.stub!(:instance).and_return(configuration)
-
-      described_class.new('story_id')
-    end
-  end
-end

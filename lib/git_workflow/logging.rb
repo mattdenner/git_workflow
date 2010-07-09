@@ -1,6 +1,6 @@
 require 'logger'
 
-class GitWorkflow
+module GitWorkflow
   module Logging
     def self.included(base)
       base.instance_eval do
@@ -20,7 +20,7 @@ class GitWorkflow
       end
     end
 
-    module ClassMethods
+    class << self
       def logger=(logger)
         @logger = logger
       end
@@ -33,6 +33,16 @@ class GitWorkflow
         logger = Logger.new(STDOUT)
         logger.level = Logger::INFO
         logger
+      end
+    end
+
+    module ClassMethods
+      def logger=(logger)
+        @logger = logger
+      end
+
+      def logger
+        @logger || GitWorkflow::Logging.logger
       end
 
       def log(level, message, &block)

@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-class GitWorkflow
-  public :pivotal_tracker_service
+class GitWorkflow::Commands::Base
+  public :pivotal_tracker_service_for
 end
 
-describe GitWorkflow do
-  describe '#pivotal_tracker_service' do
+describe GitWorkflow::Commands::Base do
+  describe '#pivotal_tracker_service_for' do
     it_should_behave_like 'it needs configuration'
 
     before(:each) do
-      @workflow    = GitWorkflow.new('story_id')
+      @command     = described_class.new
       @expectation = RestClient::Resource.should_receive(:new)
     end
 
     after(:each) do
       @expectation.and_return(:ok)
-      @workflow.pivotal_tracker_service.should == :ok
+      @command.pivotal_tracker_service_for('story_id').should == :ok
     end
 
     it 'uses the correct PT URL' do
