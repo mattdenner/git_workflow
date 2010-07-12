@@ -9,8 +9,8 @@ gem 'POpen4', :require => 'popen4'
 group :test do
   gem 'rspec', :require => 'spec'
   gem 'cucumber'
-  gem 'aruba'
-  gem 'sinatra_fake_webservice'
+  gem 'aruba',   '>= 0.2.0'
+  gem 'sinatra', '>= 1.0.0'
 end
 
 # Gems for the build environment

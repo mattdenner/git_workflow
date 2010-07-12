@@ -5,6 +5,8 @@ describe GitWorkflow::Git do
     @git, @repository = Class.new, mock('Repository')
     @git.send(:extend, GitWorkflow::Git)
     @git.stub(:repository).and_return(@repository)
+
+    @git.stub(:info).with(anything)
   end
 
   describe '#in_git_branch' do
