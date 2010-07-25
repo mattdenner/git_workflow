@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogiri',    [ '>= 1.4.2' ])
   s.add_dependency('builder',     [ '>= 2.1.2' ])
   s.add_dependency('POpen4',      [ '>= 0.1.4' ])
+  s.add_dependency('highline',    [ '>= 1.6.1' ])
 
   s.authors     = ["Matthew Denner"]
   s.date        = %q{2010-07-01}

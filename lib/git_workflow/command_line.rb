@@ -9,7 +9,7 @@ module GitWorkflow
     def parse_command_line(command_line_arguments, &block)
       parser = create_parser
       parser.parse!(command_line_arguments)
-      yield(command_line_arguments)
+      yield(command_line_arguments) if block_given?
     rescue InvalidCommandLine => exception
       puts parser
       exit 1

@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'git_workflow'
+
+GitWorkflow::Commands::Setup.new(ARGV).execute
