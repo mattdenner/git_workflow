@@ -68,6 +68,13 @@ module GitWorkflow
         raise ConfigError, "Could not retrieve '#{ key }' configuration setting"
       end
 
+      def config_set(key, value)
+        raise ConfigError, 'No key has been specified for configuration setting' if key.blank?
+        execute_command(%Q{git config '#{ key }' "#{ value }"})
+      rescue Execution::CommandFailure => exception
+        raise ConfigError, "Could not set '#{ key }' configuration setting (value: #{ value })"
+      end
+
       def push(branch)
         execute_command("git push origin #{ branch }")
       rescue Execution::CommandFailure => exception
@@ -124,6 +131,10 @@ module GitWorkflow
 
     def get_config_value_for!(key)
       get_config_value_for(key) or raise StandardError, "Required configuration setting '#{ key }' is unset"
+    end
+
+    def set_config_value(key, value)
+      repository.config_set(key, value)
     end
   end
 end

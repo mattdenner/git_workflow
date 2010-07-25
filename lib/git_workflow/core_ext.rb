@@ -89,4 +89,12 @@ class Module
       undef_method(without_chain_method)
     end
   end
+
+  def delegate(name, options)
+    class_eval <<-END_OF_DELEGATION
+      def #{ name }(*args, &block)
+        #{ options[ :to ] }.#{ name }(*args, &block)
+      end
+    END_OF_DELEGATION
+  end
 end
