@@ -50,13 +50,30 @@ module GitWorkflow
 
   private
 
+    class XmlWrapper
+      def initialize(xml)
+        @xml = Nokogiri::XML(xml)
+      end
+
+      def required!(element)
+        value = optional(element)
+        raise MissingElement, "Missing '#{ element }' in the PT XML" if value.blank?
+        value
+      end
+
+      def optional(element)
+        values = @xml.xpath("/story/#{ element }/text()")
+        values.empty? ? nil : values.first.content
+      end
+    end
+
     def load_story!
       info("Retrieving story information") do
-        xml          = Nokogiri::XML(@service.get)
-        @story_type  = xml.xpath('/story/story_type/text()').to_s
-        @name        = xml.xpath('/story/name/text()').to_s
-        @story_id    = xml.xpath('/story/id/text()').to_s.to_i
-        @description = xml.xpath('/story/description/text()').to_s
+        xml          = XmlWrapper.new(@service.get)
+        @story_id    = xml.required!(:id).to_i
+        @story_type  = xml.required!(:story_type)
+        @name        = xml.required!(:name)
+        @description = xml.optional(:description)
       end
     end
   end
