@@ -1,3 +1,5 @@
+require 'optparse'
+
 module GitWorkflow
   module CommandLine
     InvalidCommandLine = Class.new(StandardError)
@@ -14,7 +16,7 @@ module GitWorkflow
     end
 
     def create_parser
-      OptionParser.new do |options|
+      ::OptionParser.new do |options|
         usage_info(options)
 
         options.separator ''
