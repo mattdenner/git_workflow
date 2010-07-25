@@ -20,7 +20,11 @@ module GitWorkflow
     end
 
     def branch_name
-      @branch_name ||= GitWorkflow::Configuration.instance.local_branch_convention.to(self)
+      @local_branch_name ||= GitWorkflow::Configuration.instance.local_branch_convention.to(self)
+    end
+
+    def remote_branch_name
+      @remote_branch_name ||= GitWorkflow::Configuration.instance.remote_branch_convention.to(self)
     end
 
     def start_state

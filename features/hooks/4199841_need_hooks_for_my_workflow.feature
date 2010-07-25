@@ -9,7 +9,7 @@ Feature: Need hooks for my workflow
     And I have "mine" callbacks enabled
 
     Given the story 4199841 exists
-    And the name of story 4199841 is "Need the ability to start a new branch"
+    And the name of story 4199841 is "Need hooks for my workflow"
 
     Given the local branch "4199841_need_hooks_for_my_workflow" exists
 

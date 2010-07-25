@@ -14,14 +14,21 @@ module GitWorkflow
         end
 
         module StartBehaviour
+          def self.included(base)
+            base.instance_eval do
+              include GitWorkflow::Callbacks::PivotalTrackerSupport
+            end
+          end
+
           def start(story, source)
-            checkout_or_create_branch(story.branch_name, source)
+            checkout_or_create_branch(story.branch_name, source || 'master')
           end
         end
 
         module FinishBehaviour
           def self.included(base)
             base.instance_eval do
+              include GitWorkflow::Callbacks::PivotalTrackerSupport
               include GitWorkflow::Callbacks::TestCodeSupport
               include GitWorkflow::Callbacks::RemoteGitBranchSupport
             end
