@@ -12,7 +12,7 @@ module GitWorkflow
 
       def execute
         story(@story_id) do |story|
-          create_branch_for_story!(story, @parent_branch)
+          start(story, @parent_branch)
           start_story_on_pivotal_tracker!(story)
   
           $stdout.puts "Story #{ story.story_id }: #{ story.name }"
@@ -21,18 +21,6 @@ module GitWorkflow
       end
 
     private
-
-      def create_branch_for_story!(story, source = nil)
-        checkout_or_create_branch(story.branch_name, source)
-      end
-
-      def start_story_on_pivotal_tracker!(story)
-        info("Marking story #{ story.story_id } as started") do
-          story.service! do |xml|
-            xml.current_state(story.start_state)
-          end
-        end
-      end
 
       def usage_info(options)
         options.banner = 'Usage: git start <PT story number> [<parent branch>]'

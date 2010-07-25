@@ -116,10 +116,10 @@ module GitWorkflow
       end
     end
 
-    def get_config_value_for(key)
+    def get_config_value_for(key, default = nil)
       repository.config_get(key)
     rescue Repository::ConfigError => exception
-      nil
+      default
     end
 
     def get_config_value_for!(key)
