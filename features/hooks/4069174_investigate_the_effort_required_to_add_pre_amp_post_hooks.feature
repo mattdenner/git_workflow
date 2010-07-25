@@ -15,7 +15,7 @@ Feature: Adding pre-and-post hooks
   Scenario: Hooked into start
     When I successfully execute "git start 4069174"
 
-    Then the stdout should contain "create_branch_for_story!"
+    Then the stdout should contain "start"
     And the stdout should contain "start_story_on_pivotal_tracker!"
 
   Scenario: Hooked into finish
@@ -23,5 +23,5 @@ Feature: Adding pre-and-post hooks
 
     When I successfully execute "git finish 4069174"
 
-    Then the stdout should contain "merge_story_into!"
+    Then the stdout should contain "finish"
     And the stdout should contain "finish_story_on_pivotal_tracker!"

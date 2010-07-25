@@ -1,4 +1,4 @@
-# rake features FEATURE=features/core_functionality/4049578_need_the_ability_to_start_a_branch.feature
+# rake features FEATURE=features/core_functionality/4049578_need_the_ability_to_start_a_new_branch.feature
 @core_functionality @needs_service
 Feature: Need the ability to start a new branch
 

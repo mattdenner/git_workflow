@@ -23,13 +23,13 @@ describe String do
   end
 end
 
-describe GitWorkflow::Callbacks::Styles::Mine do
+describe GitWorkflow::Callbacks::Styles::Mine::FinishBehaviour do
   before(:each) do
     @callbacks = Class.new
-    @callbacks.send(:extend, GitWorkflow::Callbacks::Styles::Mine)
+    @callbacks.send(:extend, GitWorkflow::Callbacks::Styles::Mine::FinishBehaviour)
   end
 
-  describe '#merge_story_into_with_my_callbacks' do
+  describe '#finish' do
     before(:each) do
       @story = mock('Story')
       @story.stub(:branch_name).and_return('story_branch')
@@ -39,14 +39,14 @@ describe GitWorkflow::Callbacks::Styles::Mine do
     end
 
     after(:each) do
-      @callbacks.merge_story_into_with_my_callbacks!(@story, @target_branch)
+      @callbacks.finish(@story, @target_branch)
     end
 
     it 'runs the tests but not the push if non-master branch' do
       @target_branch = 'non-master'
 
       @callbacks.should_receive(:in_git_branch).with(@target_branch).and_yield.ordered
-      @callbacks.should_receive(:merge_story_into_without_my_callbacks!).with(@story, anything).ordered
+      @callbacks.should_receive(:merge_branch).with('story_branch', anything).ordered
       @callbacks.should_receive(:run_tests_with_recovery!).with(:spec, :features).ordered
 
       @callbacks.should_not_receive(:push_current_branch_to).with('non-master').ordered
@@ -56,32 +56,44 @@ describe GitWorkflow::Callbacks::Styles::Mine do
       @target_branch = 'master'
 
       @callbacks.should_receive(:in_git_branch).with(@target_branch).and_yield.ordered
-      @callbacks.should_receive(:merge_story_into_without_my_callbacks!).with(@story, anything).ordered
+      @callbacks.should_receive(:merge_branch).with('story_branch', anything).ordered
       @callbacks.should_receive(:run_tests_with_recovery!).with(:spec, :features).ordered
 
       @callbacks.should_receive(:push_current_branch_to).with('master').ordered
     end
   end
+end
 
+describe GitWorkflow::Callbacks::Styles::Mine do
   describe '.setup' do
     before(:each) do
-      @target = Class.new
-      @target.instance_eval { define_method(:merge_story_into!) { } }
-      @target.should_receive(:alias_method_chain).with(:merge_story_into!, :my_callbacks)
+      @start, @finish = Class.new, Class.new
 
-      GitWorkflow::Callbacks::Styles::Mine.setup(@target)
+      GitWorkflow::Callbacks::Styles::Mine.setup(@start, @finish)
     end
 
-    it 'has the test code support' do
-      @target.included_modules.should include(GitWorkflow::Callbacks::TestCodeSupport)
+    context 'configured start' do
+      it 'has my callbacks installed' do
+        @start.included_modules.should include(GitWorkflow::Callbacks::Styles::Mine::StartBehaviour)
+      end
     end
 
-    it 'has the remote git branch support' do
-      @target.included_modules.should include(GitWorkflow::Callbacks::RemoteGitBranchSupport)
-    end
+    context 'configured finish' do
+      it 'has the Pivotal Tracker support' do
+        @finish.included_modules.should include(GitWorkflow::Callbacks::PivotalTrackerSupport)
+      end
 
-    it 'has my callbacks installed' do
-      @target.included_modules.should include(GitWorkflow::Callbacks::Styles::Mine)
+      it 'has the test code support' do
+        @finish.included_modules.should include(GitWorkflow::Callbacks::TestCodeSupport)
+      end
+
+      it 'has the remote git branch support' do
+        @finish.included_modules.should include(GitWorkflow::Callbacks::RemoteGitBranchSupport)
+      end
+
+      it 'has my callbacks installed' do
+        @finish.included_modules.should include(GitWorkflow::Callbacks::Styles::Mine::FinishBehaviour)
+      end
     end
   end
 end

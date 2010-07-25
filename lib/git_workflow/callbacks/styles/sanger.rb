@@ -1,29 +1,38 @@
 require 'git_workflow/callbacks/test_code_support'
 require 'git_workflow/callbacks/remote_git_branch_support'
+require 'git_workflow/callbacks/pivotal_tracker_support'
+require 'git_workflow/commands/start'
 require 'git_workflow/commands/finish'
 
 module GitWorkflow
   module Callbacks
     module Styles
       module Sanger
-        def self.setup(into_class = GitWorkflow::Commands::Finish)
-          into_class.instance_eval do
-            include GitWorkflow::Callbacks::TestCodeSupport
-            include GitWorkflow::Callbacks::RemoteGitBranchSupport
-            include GitWorkflow::Callbacks::Styles::Sanger
+        def self.setup(start_command = GitWorkflow::Commands::Start, finish_command = GitWorkflow::Commands::Finish)
+          start_command.send(:include, StartBehaviour)
+          finish_command.send(:include, FinishBehaviour)
+        end
+
+        module StartBehaviour
+          def start(story, source)
+            checkout_or_create_branch(story.branch_name, source)
           end
         end
 
-        def self.included(base)
-          base.alias_method_chain(:merge_story_into!, :sanger_callbacks)
-        end
+        module FinishBehaviour
+          def self.included(base)
+            base.instance_eval do
+              include GitWorkflow::Callbacks::TestCodeSupport
+              include GitWorkflow::Callbacks::RemoteGitBranchSupport
+            end
+          end
 
-        def merge_story_into_with_sanger_callbacks!(story, branch_name, &block)
-          run_tests!(:test, :features)
-          push_current_branch_to(story.remote_branch_name)
-          merge_story_into_without_sanger_callbacks!(story, branch_name, &block)
-          run_tests_with_recovery!(:test, :features)
-          push_current_branch_to(branch_name)
+          def finish(story, branch_name)
+            in_git_branch(story.branch_name) do
+              run_tests!(:test, :features)
+              push_current_branch_to(story.remote_branch_name)
+            end
+          end
         end
       end
     end

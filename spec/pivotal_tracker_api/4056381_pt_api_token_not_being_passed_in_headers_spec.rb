@@ -1,15 +1,26 @@
 require 'spec_helper'
+require 'git_workflow/callbacks/pivotal_tracker_support'
 
-class GitWorkflow::Commands::Base
+module GitWorkflow::Callbacks::PivotalTrackerSupport
   public :pivotal_tracker_service_for
 end
 
-describe GitWorkflow::Commands::Base do
+describe GitWorkflow::Callbacks::PivotalTrackerSupport do
+  before(:each) do
+    @command = Class.new.new
+    @command.stub!(:debug).with(any_args)
+    @command.extend(GitWorkflow::Callbacks::PivotalTrackerSupport)
+  end
+
   describe '#pivotal_tracker_service_for' do
     it_should_behave_like 'it needs configuration'
 
     before(:each) do
-      @command     = described_class.new([]) { |*args| }
+      @command.class.instance_eval do
+        stub!(:enable_http_proxy_if_present)
+        should_receive(:pivotal_tracker_url_for).with('project_id', 'story_id').and_return('url')
+      end
+
       @expectation = RestClient::Resource.should_receive(:new)
     end
 
@@ -19,7 +30,7 @@ describe GitWorkflow::Commands::Base do
     end
 
     it 'uses the correct PT URL' do
-      @expectation = @expectation.with('http://www.pivotaltracker.com/services/v3/projects/project_id/stories/story_id', anything)
+      @expectation = @expectation.with('url', anything)
     end
 
     it 'uses the users PT API token' do
