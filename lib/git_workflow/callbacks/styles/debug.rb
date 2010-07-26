@@ -2,6 +2,7 @@ require 'git_workflow/callbacks/styles/default'
 require 'git_workflow/callbacks/pivotal_tracker_support'
 require 'git_workflow/commands/start'
 require 'git_workflow/commands/finish'
+require 'log4r'
 
 module GitWorkflow
   module Callbacks
@@ -14,7 +15,7 @@ module GitWorkflow
           finish_command.send(:include, FinishBehaviour)
 
           require 'git_workflow/logging'
-          GitWorkflow::Logging.logger.level = Logger::DEBUG
+          GitWorkflow::Logging.logger.level = Log4r::DEBUG
         end
 
         module StartBehaviour
