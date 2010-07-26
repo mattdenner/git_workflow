@@ -65,8 +65,8 @@ module GitWorkflow
       def choose_branch_convention(location)
         choose("workflow.#{ location }branchconvention") do |convention|
           convention.prompt = "Choose your #{ location } branch naming convention"
-          convention.menu_option('PT story number, then PT story title', '{story.story_id}_{story.name}')
-          convention.menu_option('PT story title, then PT story number', '{story.name}_{story.story_id}')
+          convention.menu_option('PT story number, then PT story title', '${story.story_id}_${story.name}')
+          convention.menu_option('PT story title, then PT story number', '${story.name}_${story.story_id}')
         end
       end
     end
