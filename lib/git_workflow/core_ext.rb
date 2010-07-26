@@ -35,6 +35,10 @@ class String
       current.const_get(constant) or current.const_missing(constant)
     end
   end
+
+  def align(padding = '')
+    self.gsub(/^\s+([^\s])/, "#{ padding }\\1")
+  end
 end
 
 require 'popen4'
