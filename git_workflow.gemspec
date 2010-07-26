@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = [ "README.markdown" ]
 
   s.add_bindir('bin')
-  s.executables   = [ 'git-start', 'git-finish' ]
+  s.executables   = [ 'git-start', 'git-finish', 'git-workflow-setup' ]
   s.require_paths = [ 'lib' ]
   s.test_files    = [ 'spec/**/*.rb', 'features/**/*.feature', 'features/**/*.rb' ].map { |p| Dir[ p ] }.flatten
   s.files         = [ "README.markdown", "Rakefile" ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
