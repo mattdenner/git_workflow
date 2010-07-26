@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.add_dependency('builder',     [ '>= 2.1.2' ])
   s.add_dependency('POpen4',      [ '>= 0.1.4' ])
   s.add_dependency('highline',    [ '>= 1.6.1' ])
+  s.add_dependency('log4r',       [ '>= 1.1.8' ])
 
   s.authors     = ["Matthew Denner"]
   s.date        = %q{2010-07-01}
@@ -28,5 +29,5 @@ Gem::Specification.new do |s|
   s.executables   = [ 'git-start', 'git-finish', 'git-workflow-setup' ]
   s.require_paths = [ 'lib' ]
   s.test_files    = [ 'spec/**/*.rb', 'features/**/*.feature', 'features/**/*.rb' ].map { |p| Dir[ p ] }.flatten
-  s.files         = [ "README.markdown", "Rakefile" ] + [ 'lib/**/*.rb', 'bin/**' ].map { |p| Dir[ p ] }.flatten
+  s.files         = [ "README.markdown", "Rakefile" ] + [ 'lib/**/*.rb', 'lib/**/*.yaml', 'bin/**' ].map { |p| Dir[ p ] }.flatten
 end

@@ -1,4 +1,5 @@
-require 'logger'
+require 'log4r'
+require 'log4r/yamlconfigurator'
 
 module GitWorkflow
   module Logging
@@ -30,9 +31,8 @@ module GitWorkflow
       end
 
       def default_logger
-        logger = Logger.new(STDOUT)
-        logger.level = Logger::INFO
-        logger
+        Log4r::YamlConfigurator.load_yaml_file(File.expand_path(File.join(File.dirname(__FILE__), 'logger.yaml')))
+        Log4r::Logger['Console']
       end
     end
 
