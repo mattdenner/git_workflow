@@ -70,7 +70,7 @@ module GitWorkflow
 
       def config_set(key, value)
         raise ConfigError, 'No key has been specified for configuration setting' if key.blank?
-        execute_command(%Q{git config '#{ key }' "#{ value }"})
+        execute_command(%Q{git config '#{ key }' '#{ value }'})
       rescue Execution::CommandFailure => exception
         raise ConfigError, "Could not set '#{ key }' configuration setting (value: #{ value })"
       end

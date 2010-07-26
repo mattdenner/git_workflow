@@ -108,8 +108,8 @@ describe GitWorkflow::Commands::Setup do
     it 'sets up the menu correctly' do
       menu = mock('menu')
       menu.should_receive(:prompt=).with(/\bfoobar\b/)
-      menu.should_receive(:menu_option).with(/number\b.+title/, '{story.story_id}_{story.name}')
-      menu.should_receive(:menu_option).with(/title\b.+number/, '{story.name}_{story.story_id}')
+      menu.should_receive(:menu_option).with(/number\b.+title/, '${story.story_id}_${story.name}')
+      menu.should_receive(:menu_option).with(/title\b.+number/, '${story.name}_${story.story_id}')
       @command.should_receive(:choose).with(anything).and_yield(menu)
 
       @command.choose_branch_convention(:foobar)
