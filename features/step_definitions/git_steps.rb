@@ -39,7 +39,7 @@ When /^I( successfully)? execute "git (start|finish)([^\"]*)"$/ do |success,comm
   root_path    = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
   real_command = File.join(root_path, 'bin', "git-#{ command }")
   lib_path     = File.join(root_path, 'lib')
-  When %Q{I#{ success } run "ruby -I#{ lib_path } -rrubygems #{ real_command }#{ arguments }"}
+  When %Q{I#{ success } run "IGNORE_GIT_GLOBAL=true ruby -I#{ lib_path } -rrubygems #{ real_command } #{ arguments }"}
 end
 
 Given /^I commit "([^\"]+)"$/ do |filename|

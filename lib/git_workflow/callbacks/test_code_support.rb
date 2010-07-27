@@ -16,13 +16,7 @@ module GitWorkflow
     private
 
       def run_tests(*rake_test_tasks)
-        execute_command_with_output_handling([ 'rake', *rake_test_tasks ].join(' ')) do |stdout, stderr, _|
-          info(stdout.readline) until stdout.eof?
-          error(stderr.readline) until stderr.eof?
-        end
-        return true
-      rescue Execution::CommandFailure => exception
-        return false
+        system('rake', *rake_test_tasks.map(&:to_s))
       end
 
       def spawn_shell_for_recovery

@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 require 'git_workflow'
-require 'git_workflow/callbacks'
 
 GitWorkflow::Commands::Finish.new(ARGV).execute

@@ -142,13 +142,13 @@ describe GitWorkflow::Callbacks::TestCodeSupport do
 
   describe '#run_tests' do
     it 'executes the given rake tasks' do
-      @callbacks.should_receive(:execute_command_with_output_handling).with('rake task1 task2').and_return(:ok)
+      @callbacks.should_receive(:system).with('rake', 'task1', 'task2').and_return(true)
       @callbacks.send(:run_tests, :task1, :task2).should == true
     end
 
-    it 'raises if the command fails' do
-      @callbacks.should_receive(:execute_command_with_output_handling).with(anything).and_raise(Execution::CommandFailure.new('foo', :failure))
-      @callbacks.send(:run_tests).should == false
+    it 'returns the result of execution' do
+      @callbacks.should_receive(:system).with('rake', 'task1', 'task2').and_return(false)
+      @callbacks.send(:run_tests, :task1, :task2).should == false
     end
   end
 
