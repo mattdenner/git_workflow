@@ -4,6 +4,7 @@ describe Execution do
   before(:each) do
     @executor = Class.new
     @executor.send(:extend, Execution)
+    @executor.stub(:debug).with(anything).and_yield
   end
 
   before(:each) do

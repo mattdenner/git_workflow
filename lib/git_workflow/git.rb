@@ -62,7 +62,10 @@ module GitWorkflow
       end
 
       def config_get(key)
-        value = execute_command("git config #{ key }").strip
+        command  = [ 'git config' ]
+        command << '--file .git/config' if GitWorkflow::Configuration.instance.ignore_git_global?
+        command << key
+        value = execute_command(command.join(' ')).strip
         value.empty? ? nil : value
       rescue Execution::CommandFailure => exception
         raise ConfigError, "Could not retrieve '#{ key }' configuration setting"

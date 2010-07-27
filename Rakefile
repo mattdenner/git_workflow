@@ -23,7 +23,11 @@ require 'cucumber/rake/task'
 Cucumber::Rake::Task.new(:features) do |t|
   options, features = [ '--format pretty' ], 'features'
   options << "--tags '#{ ENV['tags'] }'" unless ENV['tags'].nil? or ENV['tags'].empty?
-  features = ENV['FEATURE'] unless ENV['FEATURE'].nil? or ENV['FEATURE'].empty?
+  unless ENV['FEATURE'].nil? or ENV['FEATURE'].empty?
+    features = ENV['FEATURE'] 
+    options << '-r features/step_definitions'
+    options << '-r features/support'
+  end
 
   t.cucumber_opts = "#{ options.join(' ') } '#{ features }'"
 end

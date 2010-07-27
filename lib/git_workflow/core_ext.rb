@@ -64,10 +64,12 @@ module Execution
   end
 
   def execute_command_with_output_handling(command, &block)
-    exit_status = POpen4.popen4(command) do |stdout, stderr, stdin, pid|
-      yield(stdout, stderr, stdin)
+    debug("Executing '#{ command }' ...") do
+      exit_status = POpen4.popen4(command) do |stdout, stderr, stdin, pid|
+        yield(stdout, stderr, stdin)
+      end
+      CommandFailure.new(command, exit_status).raise_if_required!
     end
-    CommandFailure.new(command, exit_status).raise_if_required!
   end
 end
 
