@@ -1,0 +1,16 @@
+log4r_config:
+  # Here we define all of the loggers that are going to be used across all of the
+  # possible configurations.
+  loggers:
+    - name: Console
+      level: INFO
+      outputters:
+      - console
+
+  # And here are the outputters and with their associated formatters.
+  outputters:
+  - type: StdoutOutputter
+    name: console
+    formatter:
+      type: PatternFormatter
+      pattern: '%l: %m'

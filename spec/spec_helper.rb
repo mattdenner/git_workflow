@@ -5,8 +5,10 @@ require 'shared_examples/configuration'
 require 'shared_examples/story'
 
 # Disable the logging output during tests
-GitWorkflow::Logging.logger = logger = Logger.new(STDOUT)
-logger.level = Logger::FATAL
+require 'log4r'
+GitWorkflow::Logging.logger = logger = Log4r::Logger.new('test logger')
+logger.outputters = Log4r::Outputter.stdout
+logger.level      = Log4r::FATAL
 
 # Just so that the test code doesn't fail
 class GitWorkflow::Commands::Base

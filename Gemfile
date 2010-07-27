@@ -5,6 +5,7 @@ gem 'nokogiri'
 gem 'builder'
 gem 'POpen4', :require => 'popen4'
 gem 'highline'
+gem 'log4r'
 
 # Gems for the test environment
 group :test do
