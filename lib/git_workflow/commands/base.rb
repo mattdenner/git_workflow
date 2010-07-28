@@ -16,6 +16,11 @@ module GitWorkflow
 
       def initialize(command_line_arguments, &block)
         parse_command_line(command_line_arguments, &block)
+        
+        # Such a hack!  This effectively the callbacks to only be loaded after the
+        # command line arguments have been processed, injecting them into an already
+        # instantiated command.  Really should refactor that!
+        require 'git_workflow/callbacks'
       end
 
       def command_specific_options(options)

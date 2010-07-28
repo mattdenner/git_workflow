@@ -65,5 +65,9 @@ module GitWorkflow
     def api_token
       @api_token ||= get_config_value_for!('pt.token')
     end
+
+    def ignore_git_global?
+      ENV['IGNORE_GIT_GLOBAL']
+    end
   end
 end

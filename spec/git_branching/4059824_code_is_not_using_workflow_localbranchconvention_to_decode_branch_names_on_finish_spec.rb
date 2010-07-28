@@ -31,6 +31,7 @@ end
 describe GitWorkflow::Commands::Finish do
   before(:each) do
     @configuration = mock('configuration')
+    @configuration.stub(:ignore_git_global?).and_return(false)
     GitWorkflow::Configuration.stub!(:instance).and_return(@configuration)
 
     @command = described_class.new([])
