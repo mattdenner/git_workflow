@@ -1,5 +1,6 @@
 require 'optparse'
 require 'log4r'
+require 'git_workflow/logging'
 
 module GitWorkflow
   module CommandLine
@@ -24,7 +25,7 @@ module GitWorkflow
         options.separator 'Common options:'
 
         options.on('-V', '--verbose') do
-          GitWorkflow::Logging.logger.level = Log4r::DEBUG
+          Log4r::Outputter['verbose_information'].level = Log4r::DEBUG
         end
         options.on('-h', '--help') do
           puts options

@@ -1,3 +1,7 @@
+Given /^my git username is "([^\"]+)"$/ do |username|
+  git_configure('user.name', username)
+end
+
 Given /^my Pivotal Tracker username is "([^\"]+)"$/ do |username|
   git_configure('pt.username', username)
 end
