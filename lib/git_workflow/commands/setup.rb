@@ -5,6 +5,7 @@ class HighLine
     eval <<-END_OF_METHOD_ALIASING
       def #{ name }_with_newline(*args, &block)
         #{ name }_without_newline(*args, &block)
+      ensure
         $stdout.puts
       end
       alias_method_chain(:#{ name }, :newline)
@@ -42,22 +43,26 @@ module GitWorkflow
       delegate :get_config_value_for, :to => 'GitWorkflow::Configuration.instance'
       delegate :set_config_value, :to => 'GitWorkflow::Configuration.instance'
 
-      def self.set_value_helper(name)
-        class_eval <<-END_OF_METHOD
-          def #{ name }(setting, *args, &block)
-            options  = args.last.is_a?(Hash) ? args.pop : {}
-            optional = options.delete(:optional)
-            args.push(options)
+      def set_value_through(method, setting, *args, &block)
+        options  = args.last.is_a?(Hash) ? args.pop : {}
+        optional = options.delete(:optional)
 
-            # Only update the value if it is set or is optional and blank.
-            value = highline.#{ name }(*args, &block)
-            set_config_value(setting, value) unless optional and value.blank?
-          end
-        END_OF_METHOD
+        # Only update the value if it is set or is optional and blank.
+        default = get_config_value_for(setting)
+        value   = highline.send(method, *args) do |question|
+          question.default = default
+          block.call(question)
+        end
+        set_config_value(setting, value) unless optional and value.blank?
       end
 
-      set_value_helper(:ask)
-      set_value_helper(:choose)
+      def ask(setting, options = {}, &block)
+        set_value_through(:ask, setting, 'Dummy', options, &block)
+      end
+
+      def choose(setting, options = {}, &block)
+        set_value_through(:choose, setting, options, &block)
+      end
 
       def enquire_about_name
         username = get_config_value_for('user.name')
@@ -77,6 +82,7 @@ module GitWorkflow
           }
 
           question.question = text.align(ALIGNMENT_PADDING)
+          question.default  = ''
         end
       end
 

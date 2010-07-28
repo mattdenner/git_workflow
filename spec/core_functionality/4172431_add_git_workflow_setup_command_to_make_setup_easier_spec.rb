@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 class GitWorkflow::Commands::Setup
+  public :set_value_through
   public :ask
   public :choose
+
   public :enquire_about_name
   public :enquire_about_token
   public :enquire_about_project_id
@@ -32,15 +34,54 @@ describe GitWorkflow::Commands::Setup do
     end
   end
 
-  [ :ask, :choose ].each do |delegating_method|
-    describe "##{ delegating_method }" do
-      it 'prompts through highline and sets the setting' do
-        callback = mock('callback')
-        callback.should_receive(:called)
+  describe '#ask' do
+    it 'calls through to set the value' do
+      callback = mock('callback')
+      callback.should_receive(:called)
 
-        @highline.should_receive(delegating_method).with(:question, {}).and_yield.and_return(:result)
-        @command.should_receive(:set_config_value).with(:setting, :result)
-        @command.send(delegating_method, :setting, :question) { callback.called }
+      @command.should_receive(:set_value_through).with(:ask, :setting, 'Dummy', :options).and_yield
+      @command.ask(:setting, :options) { callback.called }
+    end
+  end
+
+  describe '#choose' do
+    it 'calls through to set the value' do
+      callback = mock('callback')
+      callback.should_receive(:called)
+
+      @command.should_receive(:set_value_through).with(:choose, :setting, :options).and_yield
+      @command.choose(:setting, :options) { callback.called }
+    end
+  end
+
+  describe '#set_value_through' do
+    before(:each) do
+      @question.should_receive(:default=).with(:default)
+
+      @callback = mock('callback')
+      @callback.should_receive(:called).with(@question)
+
+      @command.should_receive(:get_config_value_for).with(:setting).and_return(:default)
+    end
+
+    it 'unspecified answer type sets value' do
+      @highline.should_receive(:question_user).with(:arg1, :arg2).and_yield(@question).and_return(:ok)
+      @command.should_receive(:set_config_value).with(:setting, :ok)
+      @command.set_value_through(:question_user, :setting, :arg1, :arg2) { |question| @callback.called(question) }
+    end
+
+    context 'when answer is optional' do
+      after(:each) do
+        @command.set_value_through(:question_user, :setting, :arg1, :arg2, :optional => true) { |question| @callback.called(question) }
+      end
+
+      it 'does not set the value if answer is blank' do
+        @highline.should_receive(:question_user).with(:arg1, :arg2).and_yield(@question).and_return('')
+      end
+
+      it 'sets the value if answer is non-blank' do
+        @highline.should_receive(:question_user).with(:arg1, :arg2).and_yield(@question).and_return('OK')
+        @command.should_receive(:set_config_value).with(:setting, 'OK')
       end
     end
   end
