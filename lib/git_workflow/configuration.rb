@@ -9,8 +9,8 @@ module GitWorkflow
     class Convention
       include GitWorkflow::Git
 
-      REGEXP_STORY_ID   = /\$\{\s*story\.story_id\s*\}/
-      REGEXP_EVALUATION = /\$\{([^\}]+)\}/
+      REGEXP_STORY_ID   = /\$\{\s*number\s*\}/
+      REGEXP_EVALUATION = /\$\{(number|name)\}/
 
       def initialize(convention)
         raise StandardError, "Convention '#{ convention }' has no story ID" unless convention =~ REGEXP_STORY_ID
@@ -42,8 +42,28 @@ module GitWorkflow
       end
 
       def generate_new_branch_name_for(story)
-        eval(%Q{"#{ @to_convention }"}, binding).downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
+        StoryWrapper.new(story).__instance_eval__(%Q{"#{ @to_convention }"}).downcase.gsub(/[^a-z0-9]+/, '_').sub(/_+$/, '')
       end
+
+      class StoryWrapper
+        alias_method :__instance_eval__, :instance_eval
+        instance_methods.each do |method|
+          undef_method(method) unless method.to_s =~ /^__(send|id|instance_eval)__$/
+        end
+
+        def initialize(story)
+          @story = story
+        end
+
+        def number
+          @story.story_id
+        end
+
+        def name
+          @story.name
+        end
+      end
+
     end
 
     def username

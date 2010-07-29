@@ -2,10 +2,7 @@
 @hooks @needs_service @needs_remote_repository @my_workflow
 Feature: Need hooks for my workflow
   Background:
-    Given my Pivotal Tracker username is "Matthew Denner"
-    And my Pivotal Tracker project ID is 93630
-    And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "${story.story_id}_${story.name}"
+    Given my Pivotal Tracker configuration is setup as normal
     And I have "mine" callbacks enabled
 
     Given the story 4199841 exists

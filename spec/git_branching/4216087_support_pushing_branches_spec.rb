@@ -13,7 +13,7 @@ describe GitWorkflow::Configuration do
 
   describe '#remote_branch_convention' do
     it 'uses the workflow.remotebranchconvention setting' do
-      @configuration.should_receive(:get_config_value_for!).with('workflow.remotebranchconvention').and_return('${story.story_id}_foo')
+      @configuration.should_receive(:get_config_value_for!).with('workflow.remotebranchconvention').and_return('${number}_foo')
       @configuration.remote_branch_convention
     end
   end
