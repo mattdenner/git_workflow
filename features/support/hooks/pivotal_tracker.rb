@@ -53,6 +53,13 @@ class PivotalTrackerService
       end
     end
 
+    post '/services/v3/projects/:project_id/stories/:story_id/notes' do |_, story_id|
+      handle_story(story_id) do |story|
+        comment = Nokogiri::XML(request.body.read).xpath('/note/text').first or raise StandardError, 'No comment body found!'
+        story.comments.push(comment.content)
+      end
+    end
+
     def handle_story(id, &block)
       self.class.handle_story(id, &block)
     end
@@ -78,7 +85,8 @@ class PivotalTrackerService
           :story_type     => 'feature', 
           :current_state  => 'not yet started', 
           :owned_by       => '',
-          :name           => ''
+          :name           => '',
+          :comments       => []
         )
       end
 
