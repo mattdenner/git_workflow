@@ -3,14 +3,25 @@ log4r_config:
   # possible configurations.
   loggers:
     - name: Console
-      level: INFO
+      level: DEBUG
       outputters:
-      - console
+      - normal_information
+      - verbose_information
 
   # And here are the outputters and with their associated formatters.
   outputters:
-  - type: StdoutOutputter
-    name: console
+  - name: normal_information
+    type: StdoutOutputter
+    only_at: 
+    - INFO
+    - FATAL
+    formatter:
+      type: PatternFormatter
+      pattern: '%l: %m'
+
+  - name: verbose_information
+    type: StderrOutputter
+    level: FATAL
     formatter:
       type: PatternFormatter
       pattern: '%l: %m'
