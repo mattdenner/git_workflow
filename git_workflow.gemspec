@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.specification_version     = 3
 
   s.name    = %q{git_workflow}
-  s.version = '0.0.4'
+  s.version = '0.0.5'
   
   # Get the dependencies from Bundler ...
   s.add_dependency('rest-client', [ '>= 1.5.1' ])
