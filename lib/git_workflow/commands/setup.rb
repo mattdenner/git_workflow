@@ -146,8 +146,8 @@ module GitWorkflow
             get the branch 'do_something_useful_12345'.
           }.align(ALIGNMENT_PADDING)
 
-          convention.menu_option('PT story number, then PT story title', '${story.story_id}_${story.name}')
-          convention.menu_option('PT story title, then PT story number', '${story.name}_${story.story_id}')
+          convention.menu_option('PT story number, then PT story title', '${number}_${name}')
+          convention.menu_option('PT story title, then PT story number', '${name}_${number}')
 
           convention.prompt = "Choose your #{ location } branch naming convention:"
         end

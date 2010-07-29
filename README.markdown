@@ -69,9 +69,9 @@ The idea for `workflow.localbranchconvention` and `workflow.remotebranchconventi
 
 The two branch convention settings are freeform text with substitutions.  Values that can be substituted are:
 
-* `story.story_id` is the PT story ID for the story
-* `story.name`     is the name of the PT story
+* `number` is the PT story number for the story
+* `name`   is the name of the PT story
 
-For instance, "`${story.id}_${story.name}`" will generate a branch of the form `12345_some_new_feature`, if this is for story 12345 and that story has the name 'Some new feature'.  The final branch will have non-alphanumeric characters replaced by underscore.
+For instance, "`${number}_${name}`" will generate a branch of the form `12345_some_new_feature`, if this is for story 12345 and that story has the name 'Some new feature'.  The final branch will have non-alphanumeric characters replaced by underscore.
 
 *WARNING:* I've not properly tested this with other information being placed inside the convention settings, so you're on your own if you try something different!  The `git workflow-setup` command will only choose between the two possible combinations.

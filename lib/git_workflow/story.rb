@@ -35,20 +35,36 @@ module GitWorkflow
       @story_type == 'chore' ? 'accepted' : 'finished'
     end
 
+    def comment(message)
+      _service!(:post, 'notes') do |xml|
+        xml.note {
+          xml.text(message)
+        }
+      end
+    end
+
     def service!(&block)
+      _service!(:put) do |xml|
+        xml.story {
+          xml.owned_by(GitWorkflow::Configuration.instance.username)
+          yield(xml) if block_given?
+        }
+      end
+    end
+
+  private
+
+    def _service!(action, subresource = nil, &block)
       xml = Builder::XmlMarkup.new
-      xml.story {
-        xml.owned_by(GitWorkflow::Configuration.instance.username)
-        yield(xml) if block_given?
-      }
-      @service.put(xml.target!, :content_type => 'application/xml')
+      yield(xml)
+      service = @service
+      service = service[subresource] unless subresource.nil?
+      service.send(action, xml.target!, :content_type => 'application/xml')
     rescue RestClient::ExceptionWithResponse => exception
       error('Cannot seem to perform operation with PT:')
       error(exception.response)
       raise
     end
-
-  private
 
     class XmlWrapper
       def initialize(xml)

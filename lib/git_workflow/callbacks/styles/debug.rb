@@ -15,7 +15,7 @@ module GitWorkflow
           finish_command.send(:include, FinishBehaviour)
 
           require 'git_workflow/logging'
-          GitWorkflow::Logging.logger.level = Log4r::DEBUG
+          Log4r::Outputter['verbose_information'].level = Log4r::DEBUG
         end
 
         module StartBehaviour

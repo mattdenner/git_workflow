@@ -22,7 +22,7 @@ end
 describe GitWorkflow::Configuration::Convention do 
   describe '#to' do
     before(:each) do
-      @convention = described_class.new('${story.story_id}_${story.story_name}')
+      @convention = described_class.new('${number}_${name}')
     end
 
     after(:each) do

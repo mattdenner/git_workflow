@@ -38,6 +38,7 @@ module GitWorkflow
             in_git_branch(story.branch_name) do
               run_tests!(:test, :features)
               push_current_branch_to(story.remote_branch_name)
+              story.comment("Fixed on #{ story.remote_branch_name }. Needs merging into master")
             end
           end
         end

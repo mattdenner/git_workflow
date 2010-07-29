@@ -1,8 +1,21 @@
 require 'log4r'
 require 'log4r/yamlconfigurator'
 
+module Log4r
+  class Outputter
+    def initialize_with_multiple_levels(name, hash = {})
+      initialize_without_multiple_levels(name, hash)
+      self.only_at(*hash[ :only_at ]) if hash.key?(:only_at)
+    end
+    alias_method_chain(:initialize, :multiple_levels)
+  end
+end
+
 module GitWorkflow
   module Logging
+    # Causes the loading of the logging information before anything else is done.
+    Log4r::YamlConfigurator.load_yaml_file(File.expand_path(File.join(File.dirname(__FILE__), 'logger.yaml')))
+
     def self.included(base)
       base.instance_eval do
         extend ClassMethods
@@ -31,7 +44,6 @@ module GitWorkflow
       end
 
       def default_logger
-        Log4r::YamlConfigurator.load_yaml_file(File.expand_path(File.join(File.dirname(__FILE__), 'logger.yaml')))
         Log4r::Logger['Console']
       end
     end

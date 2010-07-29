@@ -2,10 +2,7 @@
 @core_functionality @needs_service
 Feature: Changing the name of a story
   Background:
-    Given my Pivotal Tracker username is "Matthew Denner"
-    And my Pivotal Tracker project ID is 93630
-    And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "${story.story_id}_${story.name}"
+    Given my Pivotal Tracker configuration is setup as normal
 
     Given the story 4056389 exists
     And the name of story 4056389 is "PT story name changes screws with branches"
