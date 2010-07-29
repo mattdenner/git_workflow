@@ -48,8 +48,10 @@ Feature: Need hooks for WTSI workflow
     Then the stderr should not contain "The tests failed, please fix and try again"
     And the stderr should not contain "Unable to push branch '4199845_need_hooks_for_wtsi_workflow'"
     And the branch "4199845_need_hooks_for_wtsi_workflow" should not be merged into master
-    And story 4199845 should be finished
     And the local and remote "4199845_need_hooks_for_wtsi_workflow" branches should agree
+
+    Then story 4199845 should be finished
+    And story 4199845 should have a comment of "Fixed on 4199845_need_hooks_for_wtsi_workflow. Needs merging into master"
 
   Scenario: Pushes remote name properly
     Given my remote branch naming convention is "${story.name}_${story.story_id}"
