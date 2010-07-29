@@ -9,6 +9,24 @@ Given /^the local branch "([^\"]+)" exists$/ do |branch|
   end
 end
 
+Given /^the local branch "([^\"]+)" has been pushed remotely$/ do |branch|
+  in_current_dir do
+    execute_silently(%Q{git push origin #{ branch }})
+  end
+end
+
+Given /^the local branch "([^\"]+)" does not exist$/ do |branch|
+  in_current_dir do
+    execute_silently(%Q{git branch -D #{ branch }})
+  end
+end
+
+Given /^the remote reference to "([^"]*)" does not exist$/ do |branch|
+  in_current_dir do
+    execute_silently(%Q{git branch -rD origin/#{ branch }})
+  end
+end
+
 Given /^the local branch "([^\"]+)" is active$/ do |branch|
   in_current_dir do
     execute_silently(%Q{git checkout #{ branch }})

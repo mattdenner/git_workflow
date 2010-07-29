@@ -9,9 +9,11 @@ describe GitWorkflow::Callbacks::Styles::Sanger::StartBehaviour do
 
   describe '#start' do
     after(:each) do
+      repository = mock('Git Repository')
+      @behaviour.stub(:repository).and_return(repository)
+
       story = mock('Story')
-      story.stub(:branch_name).and_return('story_branch')
-      @behaviour.should_receive(:checkout_or_create_branch).with('story_branch', @expected_branch_point)
+      story.should_receive(:checkout).with(repository, @expected_branch_point)
 
       @behaviour.start(story, @branch_point)
     end

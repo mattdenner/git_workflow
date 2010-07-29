@@ -19,7 +19,7 @@ module GitWorkflow
           end
 
           def start(story, source)
-            checkout_or_create_branch(story.branch_name, source)
+            story.checkout(self.repository, source)
           end
         end
 
