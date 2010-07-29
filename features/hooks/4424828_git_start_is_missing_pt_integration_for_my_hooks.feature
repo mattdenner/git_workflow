@@ -2,10 +2,7 @@
 @hooks @needs_service @my_workflow
 Feature: 'git start' should integrate with PT for my workflow
   Scenario: Starting a new branch with my workflow
-    Given my Pivotal Tracker username is "Matthew Denner"
-    And my Pivotal Tracker project ID is 93630
-    And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "${story.story_id}_${story.name}"
+    Given my Pivotal Tracker configuration is setup as normal
     And I have "mine" callbacks enabled
 
     Given the story 4424828 exists

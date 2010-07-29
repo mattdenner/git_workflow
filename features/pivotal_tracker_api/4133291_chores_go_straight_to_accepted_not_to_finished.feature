@@ -2,10 +2,7 @@
 @pivotal_tracker_api @needs_service
 Feature: Finishing a chore means accepting it
   Scenario: Finishing a chore
-    Given my Pivotal Tracker username is "Matthew Denner"
-    And my Pivotal Tracker project ID is 93630
-    And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "${story.story_id}_${story.name}"
+    Given my Pivotal Tracker configuration is setup as normal
 
     Given the story 4133291 exists
     And story 4133291 is a chore

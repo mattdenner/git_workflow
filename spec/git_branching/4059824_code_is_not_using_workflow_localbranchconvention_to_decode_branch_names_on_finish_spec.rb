@@ -10,7 +10,7 @@ describe GitWorkflow::Configuration do
   describe '#local_branch_convention' do
     before(:each) do
       @configuration = GitWorkflow::Configuration.instance_for_testing
-      @configuration.should_receive(:get_config_value_for!).with('workflow.localbranchconvention').once.and_return('${story.story_id}_${story.name}')
+      @configuration.should_receive(:get_config_value_for!).with('workflow.localbranchconvention').once.and_return('${number}_${name}')
     end
 
     it 'uses the workflow.localbranchconvention configuration value' do
@@ -57,7 +57,7 @@ describe GitWorkflow::Configuration::Convention do
     end
 
     it 'does not error if story_id included' do
-      described_class.new('${story.story_id}_foo')
+      described_class.new('${number}_foo')
     end
   end
 
@@ -94,20 +94,20 @@ describe GitWorkflow::Configuration::Convention do
   end
 
   context 'after successful initialization' do
-    context 'with ${story.story_id}_${story.name}' do
+    context 'with ${number}_${name}' do
       it_should_behave_like 'branch convention behaviour'
 
       before(:each) do
-        @convention                = '${story.story_id}_${story.name}'
+        @convention                = '${number}_${name}'
         @to_result, @from_mismatch = :start, :end
       end
     end
 
-    context 'with ${story.name}_${story.story_id}' do
+    context 'with ${name}_${number}' do
       it_should_behave_like 'branch convention behaviour'
 
       before(:each) do
-        @convention                = '${story.name}_${story.story_id}'
+        @convention                = '${name}_${number}'
         @to_result, @from_mismatch = :end, :start
       end
     end

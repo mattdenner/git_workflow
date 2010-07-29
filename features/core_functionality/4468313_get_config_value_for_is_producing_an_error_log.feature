@@ -8,7 +8,8 @@ Feature: Separate the various logging information
     Given my git username is "Matthew Denner"
     And my Pivotal Tracker project ID is 93630
     And my Pivotal Tracker token is 1234567890
-    And my local branch naming convention is "${story.story_id}_${story.name}"
+    And my local branch naming convention is "${number}_${name}"
+    And my remote branch naming convention is "${number}_${name}"
 
     Given the story 4468313 exists
     And the name of story 4468313 is "'get_config_value_for' is producing an error log"

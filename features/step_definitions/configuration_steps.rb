@@ -1,3 +1,11 @@
+Given /^my Pivotal Tracker configuration is setup as normal$/ do
+  Given %Q{my Pivotal Tracker username is "Matthew Denner"}
+  Given %Q{my Pivotal Tracker project ID is 93630}
+  Given %Q{my Pivotal Tracker token is 1234567890}
+  Given %Q{my local branch naming convention is "${number}_${name}"}
+  Given %Q{my remote branch naming convention is "${number}_${name}"}
+end
+
 Given /^my git username is "([^\"]+)"$/ do |username|
   git_configure('user.name', username)
 end
@@ -15,7 +23,7 @@ Given /^my Pivotal Tracker token is ([a-zA-Z0-9]+)$/ do |token|
   git_configure('pt.token', token)
 end
 
-Given /^my (local|remote) branch naming convention is "((?:(?:(?:\$\{[a-z][a-z_]+\.[a-z][a-z_]+\})|[a-zA-Z0-9_]+)+))"$/ do |branch,convention|
+Given /^my (local|remote) branch naming convention is "((?:(?:(?:\$\{[a-z][a-z_]+\})|[a-zA-Z0-9_]+)+))"$/ do |branch,convention|
   git_configure("workflow.#{ branch }branchconvention", convention)
 end
 
