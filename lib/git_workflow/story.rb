@@ -52,6 +52,17 @@ module GitWorkflow
       end
     end
 
+    def checkout(repository, branch_from)
+      repository.fetch
+      if repository.does_branch_exist?(self.branch_name)
+        repository.checkout(self.branch_name)
+      elsif repository.does_branch_exist?("remotes/origin/#{ self.remote_branch_name }")
+        repository.create(self.branch_name, "origin/#{ self.remote_branch_name }", :track => true)
+      else
+        repository.create(self.branch_name, branch_from)
+      end
+    end
+
   private
 
     def _service!(action, subresource = nil, &block)

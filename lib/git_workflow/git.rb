@@ -33,13 +33,15 @@ module GitWorkflow
         end
       end
 
-      def create(branch, source = nil)
+      def create(branch, source = nil, options = {})
         maintain_current_branch(branch) do
           begin
             info("Creating branch '#{ branch }'") do
-              command = "git checkout -b #{ branch }"
-              command << " #{ source }" unless source.nil?
-              execute_command(command)
+              command = [ 'git checkout' ]
+              command << '--track' if options[ :track ]
+              command << "-b #{ branch }"
+              command << source unless source.nil?
+              execute_command(command.join(' '))
             end
           rescue Execution::CommandFailure => exception
             raise CheckoutError, "Unable to create branch '#{ branch }'"
@@ -58,7 +60,8 @@ module GitWorkflow
       end
 
       def does_branch_exist?(branch)
-        execute_command('git branch') =~ /\s+#{ branch }(\s+|$)/
+        $stderr.puts "BRANCH: '#{ branch }'"
+        execute_command('git branch -a') =~ /\s+#{ branch }(\s+|$)/
       end
 
       def config_get(key)
@@ -84,11 +87,23 @@ module GitWorkflow
         raise BranchError, "Unable to push branch '#{ branch }'"
       end
 
+      def fetch
+        return unless has_remote_references?
+        execute_command('git fetch --prune')
+        execute_command('git fetch --tags')
+      rescue Execution::CommandFailure => exception
+        raise BranchError, "Unable to fetch remote information"
+      end
+
     private
 
       def maintain_current_branch(branch, &block)
         yield
         @current_branch = branch
+      end
+
+      def has_remote_references?
+        not execute_command('git remote').blank?
       end
     end
 

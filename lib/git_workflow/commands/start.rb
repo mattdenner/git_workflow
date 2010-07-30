@@ -15,8 +15,8 @@ module GitWorkflow
           start(story, @parent_branch)
           start_story_on_pivotal_tracker!(story)
   
-          $stdout.puts "Story #{ story.story_id }: #{ story.name }"
-          $stdout.puts story.description
+          info("Story #{ story.story_id }: #{ story.name }")
+          info(story.description)
         end
       end
 
